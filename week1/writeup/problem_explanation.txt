@@ -1,0 +1,13 @@
+find . -type f -exec ls -s {} \; | sort -n | head -10
+	find : find files / directory
+		-type f : specify to find only files
+	-exec : execute a command on what follows until a ;
+		ls : list contents of directory
+			-s : include size
+		{} : replaced with each consecutive file name
+		\; : end of command
+	| : output of last command is input of this one
+	sort -n : sort in numerical order
+	head -10 : display the first 10 lines
+ 
+This function finds all files within the directory, sorts them in numerical order (including sub folder names) and then displays the first 10 lines, including their size.

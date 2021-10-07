@@ -1,0 +1,10 @@
+wc -l ../data/fasta/E.coli.fasta ../data/fasta/407228412.fasta ../data/fasta/407228326.fasta #1 use wc to count number of lines in each file sequentially
+
+awk '(NR>1)' ../data/fasta/E.coli.fasta #2 print all lines where line count is > 1
+
+awk '(NR>1)' ../data/fasta/E.coli.fasta | wc -c #3 output all lines where line count > 1, then count characters using wc -c
+
+awk '(NR>1)' ../data/fasta/E.coli.fasta | tr -d "\n" | grep -io "atgc" | wc -l #4 get output less first line as above. use tr -d to delete characters, specifically \n (newline). search for non-case sensitive occurences of atgc using grep -i. use -o to output each occurence on a seperate line, so they can be counted with wc -l
+
+AT=$(awk '(NR>1)' ../data/fasta/E.coli.fasta | tr -d "\n" | grep -io "a\|t" | wc -l); GC=$(awk '(NR>1)' ../data/fasta/E.coli.fasta | tr -d "\n" | grep -io "g\|c" | wc -l) ; echo "$AT/$GC" | bc -l #5 use a similar method to above to find no of occurences, except search for either a or t, or g or c. assign a/t count to AT and g/c count to GC. use bc -l to do floating point division with standard bc math library, on AT variable divided by GC variable. print to terminal using echo.
+
