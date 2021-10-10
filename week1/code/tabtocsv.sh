@@ -6,12 +6,18 @@
 # Arguments: 1 -> tab delimited file
 # Date: Oct 2021
 
-echo "Creating a comma delimited version of $1..."
-cat $1 | tr -s "\t" "," >> $1.csv
-if [$? == 0]
-then
-    echo "Done!"
+# Return an error message if the input file doesn't exist
+if [ ! -f $1 ]; then
+    echo "$1 does not exist"
     exit
 fi
-echo "Invalid/no input file"
+
+# Return an error message if there is no input
+if [ $# -eq 0 ]; then
+    echo "No input file"
+    exit
+fi
+
+echo "Creating a comma delimited version of $1..."
+cat $1 | tr -s "\t" "," >> `basename -s .txt $1`.csv
 exit
