@@ -19,5 +19,5 @@ if [ $# -eq 0 ]; then
 fi
 
 echo "Creating a comma delimited version of $1..."
-cat $1 | tr -s "\t" "," >> `basename -s .txt $1`.csv
+cat $1 | tr -s "\t" "," >> ../results/`basename -s .txt $1`.csv
 exit

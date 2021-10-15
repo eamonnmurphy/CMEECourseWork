@@ -19,6 +19,23 @@ taxa = [ ('Myotis lucifugus','Chiroptera'),
 #  OR,
 # 'Chiroptera': {'Myotis lucifugus'} ... etc
 
+# Create taxa_dic with the correct keys
 taxa_dic = {'Rodentia': [], 'Afrosoricida': [], 'Carnivora': [], 'Chiroptera': []}
-taxa_dic['Rodentia'].append(pair[0]) for pair in taxa if pair[1] == 'Rodentia'
-taxa_dic['Afrosoricida'].append(pair[0]) for pair in taxa if pair[1] == 'Afrosoricida'
+
+# Create a seperate set for each order
+rodentia = {pair[0] for pair in taxa if pair[1] == 'Rodentia'}
+afrosoricida = {pair[0] for pair in taxa if pair[1] == 'Afrosoricida'}
+carnivora = {pair[0] for pair in taxa if pair[1] == 'Carnivora'}
+chiroptera = {pair[0] for pair in taxa if pair[1] == 'Chiroptera'}
+
+# Map each set to the correct key in taxa_dic
+taxa_dic['Rodentia'] = rodentia
+taxa_dic['Chiroptera'] = chiroptera
+taxa_dic['Carnivora'] = carnivora
+taxa_dic['Afrosoricida'] = afrosoricida
+
+# Print output
+print('Afrosoricida: ', taxa_dic['Afrosoricida'])
+print('Carnivora: ', taxa_dic['Carnivora'])
+print('Chiroptera: ', taxa_dic['Chiroptera'])
+print('Rodentia: ', taxa_dic['Rodentia'])

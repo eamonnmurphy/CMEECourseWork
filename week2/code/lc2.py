@@ -19,7 +19,7 @@ rainfall = (('JAN',111.4),
 
 high_rainfall_months = [pair for pair in rainfall if pair[1] > 100]
 print("Months with rainfall > 100mm, with rainfall values:\n", high_rainfall_months)
- 
+
 # (2) Use a list comprehension to create a list of just month names where the
 # amount of rain was less than 50 mm.
 
@@ -47,4 +47,3 @@ print("Months with rainfall volumes of less than 50mm:\n", low_rainfall_months)
 # Months and rainfall values when the amount of rain was greater than 100mm:
 # [('JAN', 111.4), ('FEB', 126.1), ('AUG', 140.2), ('NOV', 128.4), ('DEC', 142.2)]
 # ... etc.
-
