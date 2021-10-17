@@ -20,5 +20,5 @@ fi
 cat $1 > $3
 cat $2 >> $3
 echo "Merged File is"
-cat ../results/$3
+cat $3
 exit

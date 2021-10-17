@@ -1,5 +1,7 @@
 *~ 
 *.tmp
 week1/results/*
+week2/results/*
 !week1/results/.gitkeep
+!week2/results/.gitkeep
 main
