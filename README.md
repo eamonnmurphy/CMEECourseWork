@@ -5,7 +5,8 @@ Work is organised by week (week1, week2 etc.), with each week containing code, d
 
 Languages currently used: bash, python
 
-No special dependencies
+Dependencies:
+* imagemagick
 
 Software versions:
 * Ubuntu 20.04.3 LTS

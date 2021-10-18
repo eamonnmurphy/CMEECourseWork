@@ -25,3 +25,11 @@ Scripts are contained in **code** directory:
 * test_control_flow.py - control flow exercises
 * tuple<span>.py - prints info about bird species from a list
 * using_name.py
+
+Data:
+* bodymass.csv 
+* JustOaksData.csv 
+* seq.csv 
+* testcsv.csv  
+* TestOaksData.csv
+

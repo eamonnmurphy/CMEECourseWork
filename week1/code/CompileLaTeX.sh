@@ -1,5 +1,8 @@
 #!/bin/bash
+# Desc: Create pdf from LaTeX script and .bib file
+# Arguments: LaTeX script name
 
+# Process input if it includes .tex
 if [[ $1 == *".tex"* ]]; then
     pdflatex $1
     bibtex `basename -s .tex $1`
@@ -16,6 +19,7 @@ if [[ $1 == *".tex"* ]]; then
     exit
 fi
 
+# Process input for other cases
 pdflatex $1.tex
 bibtex $1
 pdflatex $1.tex

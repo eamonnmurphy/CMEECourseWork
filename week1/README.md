@@ -23,3 +23,7 @@ Data:
 * spawannxs.txt - list of species
 * Fasta files
 * Temperature csv files
+
+Dependencies:
+* imagemagick - for tiff2png.<span>sh
+

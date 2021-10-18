@@ -1,4 +1,6 @@
 #!/bin/bash
+# Desc: Shows use of variables in bash scripting
+# Arguments: none
 
 # Shows the use of variables
 MyVar='some string'

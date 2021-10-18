@@ -18,6 +18,7 @@ if [ $# -eq 0 ]; then
     exit
 fi
 
+# Convert tab delimited file to comma delimited and save
 echo "Creating a comma delimited version of $1..."
 cat $1 | tr -s "\t" "," >> ../results/`basename -s .txt $1`.csv
 exit
