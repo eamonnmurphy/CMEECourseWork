@@ -1,0 +1,642 @@
+Starting code feedback for Eamonn, Week1
+
+Current Points = 100
+
+Note that: 
+(1) Major sections begin with a double "====" line 
+(2) Subsections begin with a single "====" line 
+(3) Code output or text file content are printed within single "*****" lines 
+
+======================================================================
+======================================================================
+Your Git repo size this week is about 1.64 MiB on disk 
+
+PART 1: Checking project workflow...
+
+Found the following directories in parent directory: .git, week3, week2, Feedback, week1
+
+Found the following files in parent directory: README.md, .gitignore
+
+Checking for key files in parent directory...
+
+Found .gitignore in parent directory, great! 
+
+Printing contents of .gitignore:
+
+**********************************************************************
+*~ 
+*.tmp
+**/results/*
+!**/results/.gitkeep
+main
+
+**********************************************************************
+
+Found README in parent directory, named: README.md
+
+Printing contents of README.md:
+
+**********************************************************************
+# My CMEE Coursework Repository
+
+Coursework for MSc of Computational Methods in Ecology and Evolution, at ICL Silwood Park campus.
+Work is organised by week (week1, week2 etc.), with each week containing code, data, results and sandbox directories.
+
+Languages currently used: bash, python
+
+Dependencies:
+* imagemagick
+
+Software versions:
+* Ubuntu 20.04.3 LTS
+* Python 3.8.10
+
+Authored by Eamonn Murphy (eamonn.murphy21@imperial.ac.uk)
+
+**********************************************************************
+
+======================================================================
+Looking for the weekly directories...
+
+Found 3 weekly directories: week1, week2, week3
+
+The Week1 directory will be assessed 
+
+======================================================================
+======================================================================
+PART 2: Checking weekly code and workflow...
+
+======================================================================
+Assessing WEEK1...
+
+Found the following directories: code, sandbox, results, writeup, data
+
+Found the following files: README.md
+
+Checking for readme file in weekly directory...
+
+Found README in parent directory, named: README.md
+
+Printing contents of README.md:
+
+**********************************************************************
+## Week One
+
+This repository contains the work done for week 1 of the CMEE Masters.
+
+Language used: bash
+
+All scripts are contained in **code** directory.
+
+Scripts:
+* boilerplate<span>.sh - Prints simple statement
+* tabtocsv<span>.sh - Converts tab seperated file to csv
+* variables.<span>sh - Print variable, then sum two variables
+* MyExampleScript<span>.sh - Print some simple messages
+* CountLines<span>.sh - Count lines in file
+* ConcatenateTwoFiles<span>.sh - Concatentate two files, and output to new file
+* CompileLaTeX<span>.sh - Compile a LaTeX script to pdf and add references
+* tiff2png<span>.sh - Convert any tiff files in the directory
+* csvtospace<span>.sh - Convert csv to space seperated file
+* FirstExample.tex - LaTeX script to create example article
+* UnixPrac1.txt - Bash one line scripts to calculate values from fasta files
+
+Data:
+* spawannxs.txt - list of species
+* Fasta files
+* Temperature csv files
+
+Dependencies:
+* imagemagick - for tiff2png.<span>sh
+
+
+**********************************************************************
+
+Results directory is empty - good! 
+
+Found 12 code files: tiff2png.sh, CountLines.sh, FirstBiblio.bib, tabtocsv.sh, variables.sh, FirstExample.tex, boilerplate.sh, csvtospace.sh, ConcatenateTwoFiles.sh, UnixPrac1.txt, CompileLaTeX.sh, MyExampleScript.sh
+
+Found the following extra files: FirstExample.pdf
+0.5 pt deducted per extra file
+
+Current Points = 99.5
+
+======================================================================
+Testing script/code files...
+
+======================================================================
+Inspecting script file tiff2png.sh...
+
+File contents are:
+
+**********************************************************************
+#!/bin/bash
+
+for f in *.tif;
+    do
+        echo "Converting $f";
+        convert "$f" "$(basename "$f" .tif).png";
+    done
+
+**********************************************************************
+
+Testing tiff2png.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+Converting *.tif
+
+**********************************************************************
+
+Encountered error (or warning):
+convert-im6.q16: unable to open image `*.tif': No such file or directory @ error/blob.c/OpenBlob/2874.
+convert-im6.q16: no images defined `*.png' @ error/convert.c/ConvertImageCommand/3258.
+
+======================================================================
+Inspecting script file CountLines.sh...
+
+File contents are:
+
+**********************************************************************
+#!/bin/bash
+# Desc: Count the lines in the input file
+# Arguments: Text file
+
+NumLines=`wc -l $1`
+echo "The file $1 has $NumLines lines"
+echo
+
+**********************************************************************
+
+Testing CountLines.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+The file  has 0 lines
+
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00385s
+
+======================================================================
+Inspecting script file FirstBiblio.bib...
+
+File contents are:
+
+**********************************************************************
+@article{verhulst1838notice,
+  title={Notice sur la loi que la population suit dans son accroissement},
+  author={Verhulst, Pierre-Fran{\c{c}}ois},
+  journal={Corresp. Math. Phys.},
+  volume={10},
+  pages={113--126},
+  year={1838}
+}
+**********************************************************************
+
+Testing FirstBiblio.bib...
+
+======================================================================
+Inspecting script file tabtocsv.sh...
+
+File contents are:
+
+**********************************************************************
+#!/bin/bash
+# Author: Eamonn Murphy eamonn.murphy21@imperial.ac.uk
+# Script: tabtocsv.sh
+# Description: substitute the tabs in the files with commas
+# Saves the output into a .csv file
+# Arguments: 1 -> tab delimited file
+# Date: Oct 2021
+
+# Return an error message if the input file doesn't exist
+if [ ! -f $1 ]; then
+    echo "$1 does not exist"
+    exit
+fi
+
+# Return an error message if there is no input
+if [ $# -eq 0 ]; then
+    echo "No input file"
+    exit
+fi
+
+# Convert tab delimited file to comma delimited and save
+echo "Creating a comma delimited version of $1..."
+cat $1 | tr -s "\t" "," >> ../results/`basename -s .txt $1`.csv
+exit
+
+**********************************************************************
+
+Testing tabtocsv.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+No input file
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00281s
+
+======================================================================
+Inspecting script file variables.sh...
+
+File contents are:
+
+**********************************************************************
+#!/bin/bash
+# Desc: Shows use of variables in bash scripting
+# Arguments: none
+
+# Shows the use of variables
+MyVar='some string'
+echo 'The current value of the variable is' $MyVar
+echo 'Please enter a new string'
+read MyVar
+echo 'The current value of the variable is' $MyVar
+
+## Reading multiple values
+echo 'Enter two numbers seperated by space(s)'
+read a b
+echo "You entered $a and $b . Their sum is:"
+mysum=`expr $a + $b`
+echo $mysum
+
+**********************************************************************
+
+Testing variables.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+The current value of the variable is some string
+Please enter a new string
+The current value of the variable is
+Enter two numbers seperated by space(s)
+You entered  and  . Their sum is:
+
+
+**********************************************************************
+
+Encountered error (or warning):
+expr: syntax error: missing argument after ‘+’
+
+======================================================================
+Inspecting script file FirstExample.tex...
+
+File contents are:
+
+**********************************************************************
+\documentclass[12pt]{article}
+
+\title{A Simple Document}
+
+\author{Eamonn Murphy}
+
+\date{}
+
+\begin{document}
+    \maketitle
+
+    \begin{abstract}
+        This paper analyzes a seminal equation in population biology.
+    \end{abstract}
+
+    \section{Introduction}
+        This document was written for the LaTeX class in CMEE, Imperial College London.
+    
+    \section{Materials \& Methods}
+
+    A foundational equation of population biology is:
+
+    \begin{equation}
+        \frac{dN}{dt} = r N (1 - \frac{N}{K})
+    \end{equation}
+
+    It was first proposed by Verhulst in 1838 \cite{verhulst1838notice}.
+
+    \bibliographystyle{plain}
+
+    \bibliography{FirstBiblio}
+\end{document}
+**********************************************************************
+
+Testing FirstExample.tex...
+
+======================================================================
+Inspecting script file boilerplate.sh...
+
+File contents are:
+
+**********************************************************************
+#!/bin/bash
+# Author: Eamonn Murphy eamonn.murphy21@imperial.ac.uk
+# Script: boilerplate.sh
+# Desc: simple boilerplate for shell scripts
+# Arguments: none
+# Date : Oct 2021
+
+echo -e "\nThis is a shell script! \n" # -e enables interpretation of backslash escapes to allow newline
+
+exit
+
+**********************************************************************
+
+Testing boilerplate.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+
+This is a shell script! 
+
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00419s
+
+======================================================================
+Inspecting script file csvtospace.sh...
+
+File contents are:
+
+**********************************************************************
+#!/bin/bash
+# Desc: Convert a comma delimited file to space delimited
+# Arguments: .csv file
+
+# Return an error message if the input file doesn't exist
+if [ ! -f $1 ]; then
+    echo "$1 does not exist"
+    exit
+fi
+
+# Return an error message if there is no input
+if [ $# -eq 0 ]; then
+    echo "No input file"
+    exit
+fi
+
+# Create a comma delimited version of the input
+echo "Creating a space delimited version of $1..."
+cat $1 | tr -s "," " " >> ../results/`basename -s .csv $1`.txt
+exit
+
+**********************************************************************
+
+Testing csvtospace.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+No input file
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00305s
+
+======================================================================
+Inspecting script file ConcatenateTwoFiles.sh...
+
+File contents are:
+
+**********************************************************************
+#!/bin/bash
+# Desc: Concatenate two files together
+# Arguments: Two input files and output destination
+
+# Return an error message if an input file doesn't exist
+if [ ! -f $1 ] || [ ! -f $2 ]; then
+    echo "Input file does not exist"
+    exit
+fi
+
+# Return an error message if there is no input
+if [ $# -eq 0 ] || [ $# -eq 1 ]; then
+    echo "An input file is missing"
+    exit
+fi
+
+# Return an error message if no output destination
+if [ $# -eq 2 ]; then
+    echo "No output destination"
+    exit
+fi
+
+# Concatenate the files and exit
+cat $1 > $3
+cat $2 >> $3
+echo "Merged File is"
+cat $3
+exit
+
+**********************************************************************
+
+Testing ConcatenateTwoFiles.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+An input file is missing
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00279s
+
+======================================================================
+Inspecting script file UnixPrac1.txt...
+
+File contents are:
+
+**********************************************************************
+# use wc to count number of lines in each file sequentially
+wc -l ../data/fasta/E.coli.fasta ../data/fasta/407228412.fasta ../data/fasta/407228326.fasta #1 
+
+# print all lines where line count is > 1
+awk '(NR>1)' ../data/fasta/E.coli.fasta #2 
+
+# output all lines where line count > 1, then count characters using wc -m
+awk '(NR>1)' ../data/fasta/E.coli.fasta | tr -d '\n' | wc -m #3 
+
+# get output less first line as above. use tr -d to delete characters, specifically \n (newline). search for non-case sensitive occurences of atgc using grep -i. use -o to output each occurence on a seperate line, so they can be counted with wc -l
+awk '(NR>1)' ../data/fasta/E.coli.fasta | tr -d "\n" | grep -io "atgc" | wc -l #4 
+
+# use a similar method to above to find no of occurences, except search for either a or t, or g or c. assign a/t count to AT and g/c count to GC. use bc -l to do floating point division with standard bc math library, on AT variable divided by GC variable. print to terminal using echo.
+AT=$(awk '(NR>1)' ../data/fasta/E.coli.fasta | tr -d "\n" | grep -io "a\|t" | wc -l); GC=$(awk '(NR>1)' ../data/fasta/E.coli.fasta | tr -d "\n" | grep -io "g\|c" | wc -l) ; echo "$AT/$GC" | bc -l #5 
+
+
+**********************************************************************
+
+Testing UnixPrac1.txt...
+
+======================================================================
+Inspecting script file CompileLaTeX.sh...
+
+File contents are:
+
+**********************************************************************
+#!/bin/bash
+# Desc: Create pdf from LaTeX script and .bib file
+# Arguments: LaTeX script name
+
+# Process input if it includes .tex
+if [[ $1 == *".tex"* ]]; then
+    pdflatex $1
+    bibtex `basename -s .tex $1`
+    pdflatex $1
+    pdflatex $1
+    evince `basename -s .tex $1`.pdf &
+
+    # Cleanup of extra files
+    rm *.aux
+    rm *.log
+    rm *.bbl
+    rm *.blg
+
+    exit
+fi
+
+# Process input for other cases
+pdflatex $1.tex
+bibtex $1
+pdflatex $1.tex
+pdflatex $1.tex
+evince $1.pdf &
+
+# Cleanup of extra files
+rm *.aux
+rm *.log
+rm *.bbl
+rm *.blg
+
+**********************************************************************
+
+Testing CompileLaTeX.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdflatex)
+ restricted \write18 enabled.
+entering extended mode
+(/usr/share/texlive/texmf-dist/tex/latex/tools/.tex
+LaTeX2e <2020-02-02> patch level 2
+L3 programming layer <2020-02-14> File ignored)
+*
+! Emergency stop.
+<*> .tex
+        
+!  ==> Fatal error occurred, no output PDF file produced!
+Transcript written on .log.
+This is pdfTeX, Version 3.14159265-2.6-1.40.20 (TeX Live 2019/Debian) (preloaded format=pdf
+**********************************************************************
+
+Encountered error (or warning):
+bibtex: Need exactly one file argument.
+Try `bibtex --help' for more information.
+rm: cannot remove '*.aux': No such file or directory
+rm: cannot remove '*.log': No such file or directory
+rm: cannot remove '*.bbl': No such file or directory
+rm: cannot remove '*.blg': No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.144: Error when getting information for file “/home/mhasoba/Documents/Teaching/IC_CMEE/2021-22/Coursework/StudentRepos/EamonnMurphy_etm21/week1/code/.pdf”: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.144: set_filenames: Error when getting information for file “/home/mhasoba/Documents/Teaching/IC_CMEE/2021-22/Coursework/StudentRepos/EamonnMurphy_etm21/week1/code/.pdf”: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.162: Error setting file metadata: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.162: Error setting file metadata: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.162: Error setting file metadata: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.162: Error setting file metadata: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.162: Error setting file metadata: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.162: Error setting file metadata: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.162: Error setting file metadata: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.162: Error setting file metadata: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.162: Error setting file metadata: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.162: Error setting file metadata: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.162: Error setting file metadata: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.162: Error setting file metadata: No such file or directory
+
+** (evince:97581): WARNING **: 14:06:18.166: Error setting file metadata: No such file or directory
+
+======================================================================
+Inspecting script file MyExampleScript.sh...
+
+File contents are:
+
+**********************************************************************
+#!/bin/bash
+# Desc: An example script
+# Arguments: none
+
+msg1="Hello"
+msg2=$USER
+echo "$msg1 $msg2"
+echo "Hello $USER"
+echo
+
+**********************************************************************
+
+Testing MyExampleScript.sh...
+
+Output (only first 500 characters): 
+
+
+**********************************************************************
+Hello mhasoba
+Hello mhasoba
+
+
+**********************************************************************
+
+Code ran without errors
+
+Time consumed = 0.00897s
+
+======================================================================
+======================================================================
+Finished running scripts
+
+Ran into 3 errors
+
+======================================================================
+======================================================================
+
+FINISHED WEEKLY ASSESSMENT
+
+Current Points for the Week = 99.5
+
+NOTE THAT THESE ARE POINTS, NOT MARKS FOR THE WEEK!
