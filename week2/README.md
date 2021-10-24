@@ -4,6 +4,12 @@ This directory contains scripts written and data needed for them, for week two o
 
 Languages: python
 
+Dependencies:
+* csv
+* pickle
+* sys
+* doctest
+
 Scripts are contained in **code** directory:
 * align_seqs.py - find and store the best aligned sequence for the given sequence files
 * basic_csv.py
@@ -19,12 +25,13 @@ Scripts are contained in **code** directory:
 * lc1<span>.py - list comprehension exercise
 * lc2<span>.py - list comprehension exercise
 * loops<span>.py
+* MyExampleScript<span>.py
 * oaks<span>.py - find just oak tree taxa
 * scope<span>.py
 * syssargv<span>.py
-* test_control_flow.py - control flow exercises
+* test_control_flow<span>.py - control flow exercises
 * tuple<span>.py - prints info about bird species from a list
-* using_name.py
+* using_name.<span>py
 
 Data:
 * bodymass.csv 
