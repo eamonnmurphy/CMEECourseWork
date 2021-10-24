@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+
+'''Output data from a tuple of tuples to seperate lines'''
+
 birds = (('Passerculus sandwichensis', 'Savannah sparrow', 18.7),
          ('Delichon urbica', 'House martin', 19),
          ('Junco phaeonotus', 'Yellow-eyed junco', 19.5),

@@ -27,6 +27,8 @@ stochrick <- function(p0 = runif(1000, .5, 1.5), r = 1.2, K = 1, sigma = 0.2, nu
 
 }
 
+set.seed(123)
+
 print("Stochastic Ricker takes:")
 print(system.time(res1<-stochrick()))
 
@@ -44,25 +46,20 @@ stochrickvect <- function(p0 = runif(1000, .5, 1.5), r = 1.2, K = 1, sigma = 0.2
   N <- matrix(NA, numyears, length(p0))  #initialize empty matrix
   
   N[1, ] <- p0
-  
-  for (pop in 1:length(p0)) { #loop through the populations
-      
-      apply(N[yr, pop], 2, N[yr-1, pop] * exp(r * (1 - N[yr - 1, pop] / K) + rnorm(1, 0, sigma)))
-    
-  }
 
-  # for (pop in 1:length(p0)) { #loop through the populations
-  # 
-  #   for (yr in 2:numyears){ #for each pop, loop through the years
-  # 
-  #     N[yr, pop] <- N[yr-1, pop] * exp(r * (1 - N[yr - 1, pop] / K) + rnorm(1, 0, sigma)) # add one fluctuation from normal distribution
-  # 
-  #   }
-  # 
-  # }
+  randoms <- matrix(rnorm(length(p0) * (numyears - 1), 0, sigma), numyears - 1, length(p0))
+  
+  for (yr in 2:numyears){ #for each pop, loop through the years
+      
+      N[yr, ] <- N[yr-1, ] * exp(r * (1 - N[yr - 1, ] / K) + randoms[yr - 1, ]) # add one fluctuation from normal distribution
+      
+  }
+  
   return(N)
   
 }
+
+set.seed(123)
 
 print("Vectorized Stochastic Ricker takes:")
 print(system.time(res2<-stochrickvect()))

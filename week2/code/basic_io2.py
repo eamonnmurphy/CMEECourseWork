@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+'''Writing to a file'''
+
 #############
 # FILE OUTPUT
 #############

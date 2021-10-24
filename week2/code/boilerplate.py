@@ -13,7 +13,6 @@ import sys # module to interface our program with the operating system
 
 ## constants ##
 
-
 ## functions ##
 def main(argv):
     '''Main entry point of the program'''

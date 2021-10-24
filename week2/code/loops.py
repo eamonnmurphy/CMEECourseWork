@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+''' Shows examples of for loops.'''
 # FOR loops in Python
 for i in range(5):
     print(i)
