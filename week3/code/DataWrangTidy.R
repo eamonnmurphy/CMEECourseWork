@@ -19,6 +19,7 @@ fix(MyMetaData)
 ############# Transpose ###############
 # To get those species into columns and treatments into rows 
 MyData <- t(MyData) 
+MyData <- as.data.frame(MyData)
 head(MyData)
 dim(MyData)
 
@@ -35,17 +36,16 @@ rownames(TempData) <- NULL
 head(TempData)
 
 ############# Convert from wide to long format  ###############
-require(reshape2) # load the reshape2 package
+require(tidyr)
+require(dplyr)
 
-?melt #check out the melt function
+MyWrangledData <- TempData %>% pivot_longer(cols = -c("Cultivation", "Block", "Plot", "Quadrat"), names_to = "Species", values_to = "Count")
 
-MyWrangledData <- melt(TempData, id=c("Cultivation", "Block", "Plot", "Quadrat"), variable.name = "Species", value.name = "Count")
-
-MyWrangledData[, "Cultivation"] <- as.factor(MyWrangledData[, "Cultivation"])
-MyWrangledData[, "Block"] <- as.factor(MyWrangledData[, "Block"])
-MyWrangledData[, "Plot"] <- as.factor(MyWrangledData[, "Plot"])
-MyWrangledData[, "Quadrat"] <- as.factor(MyWrangledData[, "Quadrat"])
-MyWrangledData[, "Count"] <- as.integer(MyWrangledData[, "Count"])
+MyWrangledData$Cultivation <- as.factor(MyWrangledData$Cultivation)
+MyWrangledData$Block <- as.factor(MyWrangledData$Block)
+MyWrangledData$Plot <- as.factor(MyWrangledData$Plot)
+MyWrangledData$Quadrat <- as.factor(MyWrangledData$Quadrat)
+MyWrangledData$Count <- as.integer(MyWrangledData$Count)
 
 str(MyWrangledData)
 head(MyWrangledData)
@@ -62,3 +62,4 @@ dplyr::glimpse(MyWrangledData)
 
 dplyr::filter(MyWrangledData, Count>100)
 dplyr::slice(MyWrangledData, 10:15)
+
