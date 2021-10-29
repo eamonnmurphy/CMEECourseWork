@@ -37,5 +37,10 @@ for (row in 1:nrow(TreesData)){
     TreeHts[nrow(TreeHts) + 1,] = new_row
 }
 
+# Transform columns to numeric data type
+TreeHts <- transform(TreeHts, Distance.m = as.numeric(Distance.m),
+                     Angle.degrees = as.numeric(Angle.degrees),
+                     Tree.Height.m = as.numeric(Tree.Height.m))
+
 # Write dataframe to csv
 write.csv(TreeHts, "../results/TreeHts.csv",row.names=FALSE)
