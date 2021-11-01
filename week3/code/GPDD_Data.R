@@ -8,7 +8,7 @@ load("../data/GPDDFiltered.RData")
 map()
 
 # Add co-ordinate points to the map
-points(gpdd[,3], gpdd[,2], pch = 20, color = gpdd[,1])
+points(gpdd[,3], gpdd[,2], pch = 20)
 
 # This dataset is quite clearly biased towards locations in North America
 # and Europe. Therefore, any analysis done would be biased towards these

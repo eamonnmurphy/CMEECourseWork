@@ -10,25 +10,46 @@
 
 require(dplyr)
 require(tidyverse)
+require(dplyr)
+
+rm(list = ls())
 
 # Read data and look at feeding interaction data
 MyDF <- read.csv("../data/EcolArchives-E089-51-D1.csv")
 altered_df <- MyDF %>% subset(select = c(Predator.mass, Prey.mass, Type.of.feeding.interaction))
+altered_df$Size.ratio <- (altered_df$Predator.mass/altered_df$Prey.mass)
 table(altered_df$Type.of.feeding.interaction)
 
-# Split into seperate DFs based on feeding interaction
-pred_pisc <- altered_df %>% filter(Type.of.feeding.interaction == "predacious/piscivorous")
-insect <- altered_df %>% filter(Type.of.feeding.interaction == "insectivorous")
-pisc <- altered_df %>% filter(Type.of.feeding.interaction == "piscivorous")
-plank <- altered_df %>% filter(Type.of.feeding.interaction == "planktivorous")
-pred <- altered_df %>% filter(Type.of.feeding.interaction == "predacious")
-
-for (df in c(pred_pisc, insect, pisc, plank, pred)) {
-  df <- subset(df, select = c(Predator.mass, Prey.mass))
+# Create 5 subplots for predator mass by feeding interaction type
+pdf("../results/Pred_Subplots.pdf")
+par(mfrow = c(3,2))
+for (type in unique(altered_df$Type.of.feeding.interaction)) {
+  plot(density(subset(log(altered_df$Predator.mass),
+                      altered_df$Type.of.feeding.interaction == type)),
+       xlab = "Log of Predator Mass (g)", main = paste(type))
 }
+dev.off()
 
-c(pred_pisc, insect, pisc, plank, pred) <- c(pred_pisc, insect, pisc, plank, pred) %>%
-  subset(select = c(Predator.mass, Prey.mass))
+# Create subplots for prey mass by feeding interaction type
+pdf("../results/Prey_Subplots.pdf")
+par(mfrow = c(3,2))
+for (type in unique(altered_df$Type.of.feeding.interaction)) {
+  plot(density(subset(log(altered_df$Prey.mass),
+                      altered_df$Type.of.feeding.interaction == type)),
+       xlab = "Log of Prey Mass (g)", main = paste(type))
+}
+dev.off()
+
+# Create subplots for size ratios
+pdf("../results/SizeRatio_Subplots.pdf")
+par(mfrow = c(3,2))
+for (type in unique(altered_df$Type.of.feeding.interaction)) {
+  plot(density(subset((log(altered_df$Size.ratio)),
+                      altered_df$Type.of.feeding.interaction == type)),
+       xlab = "Log of Predator:Prey Size Ratio", main = paste(type))
+}
+dev.off()
+
 ################
 # Calculate log mean and median predator mass, prey mass and predator-
 # prey size-ratios to a csv file. Should have appropriate headers
@@ -36,13 +57,22 @@ c(pred_pisc, insect, pisc, plank, pred) <- c(pred_pisc, insect, pisc, plank, pre
 # File name: PP_Results.csv
 # Calculate body size stats by tapply or ddply
 
-print(mean(pred_pisc))
-output_df <- data.frame()
-output_df$Names <- c("Predacious/piscivorous", "Insectivorous", "Piscivorous",
-                     "Planktivorous", "Predacious")
-output_df$Log_mean_predator_mass <- c(mean(pred_pisc$Predator.mass), mean(insect$Predator.mass), 
-                                      mean(pisc$Predator.mass), mean(plank$Predator.mass), 
-                                      mean(pred$Predator.mass))
-print(c(mean(pred_pisc$Predator.mass), mean(insect$Predator.mass), 
-        mean(pisc$Predator.mass), mean(plank$Predator.mass), 
-        mean(pred$Predator.mass)))
+columns <- c("Log_mean_predator_mass_g" ,
+             "Log_mean_prey_mass_g" ,
+             "Log_predator:prey_size_ratio")
+
+output_df <- data.frame(matrix(nrow = 0,
+                               ncol = length(columns)))
+
+colnames(output_df) <- columns
+
+for (type in unique(altered_df$Type.of.feeding.interaction)) {
+  output_df[type,1] <- mean(subset((log(altered_df$Predator.mass)),
+                                   altered_df$Type.of.feeding.interaction == type))
+  output_df[type,2] <- mean(subset((log(altered_df$Prey.mass)),
+                                   altered_df$Type.of.feeding.interaction == type))
+  output_df[type,3] <- mean(subset(log(altered_df$Size.ratio),
+                                   altered_df$Type.of.feeding.interaction == type))
+}
+
+write.csv(output_df, "../results/PP_Results.csv")
