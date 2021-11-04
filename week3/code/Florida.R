@@ -3,6 +3,7 @@
 # Use a permutation analysis for p values
 
 # Load in data
+library(ggplot2)
 rm(list = ls())
 load("../data/KeyWestAnnualMeanTemperature.RData")
 
@@ -27,4 +28,17 @@ for(i in 1:10000){
 # Get number of randoms correlations > original and calculate
 # p value
 num <- sum(cor_vec > correlation)
-p_value <- num/100000
+p_value <- num/10000
+
+# Create images for Latex file
+p <- ggplot(data = ats, aes(Year, Temp)) + geom_point() +
+  labs(y = "Temperature (C)") +
+  geom_smooth(method = "lm", se = TRUE, fullrange = TRUE)
+
+png("../results/temp_year_scatter.png", width = 240, height = 240)
+print(p)
+dev.off()
+
+q <- qplot(cor_vec, fill = cor_vec) + 
+  labs(x = "Correlation coefficient", y = "Occurences")
+q

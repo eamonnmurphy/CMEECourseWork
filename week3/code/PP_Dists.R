@@ -16,6 +16,8 @@ rm(list = ls())
 
 # Read data and look at feeding interaction data
 MyDF <- read.csv("../data/EcolArchives-E089-51-D1.csv")
+MyDF$Prey.mass[which(MyDF$Prey.mass.unit == "mg")] <- 
+  MyDF$Prey.mass[which(MyDF$Prey.mass.unit == "mg")] / 1000
 altered_df <- MyDF %>% subset(select = c(Predator.mass, Prey.mass, Type.of.feeding.interaction))
 altered_df$Size.ratio <- (altered_df$Predator.mass/altered_df$Prey.mass)
 table(altered_df$Type.of.feeding.interaction)
