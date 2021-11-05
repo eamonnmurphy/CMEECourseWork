@@ -46,7 +46,7 @@ p <- ggplot(altered_df,
         panel.background = element_rect(fill = "transparent"),
         panel.grid.major = element_line(colour = "grey", size = 0.2),
         panel.grid.minor = element_line(colour = "grey", size = 0.1),
-        aspect.ratio = 1/3) +
+        aspect.ratio = 1/3, strip.text = element_text(size = 5.5)) +
   labs(x="Prey Mass in grams", y="Predator Mass in grams") + 
   scale_y_continuous(trans = "log10") + scale_x_continuous(trans = "log10") +
   guides(colour = guide_legend(nrow = 1, byrow = TRUE))
