@@ -1,4 +1,4 @@
-## Week Three
+# Week Three
 
 This directory contains scripts written and the data needed for them, for week three of the CMEE course (Biological Computing with R).
 
@@ -13,7 +13,7 @@ Dependencies:
 * broom
 * tidyr
 
-# Code Files
+## Code Files
 Scripts are contained in **code** directory.
 
 In-class scripts for Biological Computing in R chapter:
@@ -51,7 +51,7 @@ Practical scripts for Data Management and Visualisation:
 * PP_Regress.R
 * GPDD_Data.R
 
-# Data
+## Data
 * EcolArchives-E089-51-D1.csv
 * KeyWestAnnualMeanTemperature.Rdata
 * PoundHillMetaData.csv
