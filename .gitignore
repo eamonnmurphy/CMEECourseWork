@@ -7,3 +7,5 @@ requirements.txt
 **/**/Rplots.pdf
 week3/code/Florida.pdf
 **/**/.Rhistory
+**/**/*.tif
+**/**/data
