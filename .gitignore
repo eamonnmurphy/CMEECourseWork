@@ -8,4 +8,4 @@ requirements.txt
 week3/code/Florida.pdf
 **/**/.Rhistory
 **/**/*.tif
-**/**/data
+**/week5/data/*
