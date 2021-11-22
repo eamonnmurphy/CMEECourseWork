@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Generate two figures for the Lotka-Volterra model"""
 
+__author__ = 'Eamonn Murphy (eamonn.murphy21@imperial.ac.uk)'
+__version__ = '0.0.1'
+
 import scipy as sc
 import numpy as np
 import sys
@@ -36,6 +39,7 @@ pops, infodict = integrate.odeint(dCR_dt, RC0, t, full_output=True)
 import matplotlib.pylab as p
 
 def figure_one(time = t, populations = pops):
+    """Outputs resource and consumer density vs. time to a pdf file."""
     f1 = p.figure()
 
     p.plot(t, pops[:,0], "g-", label = "Resource density") # Plot
@@ -53,6 +57,7 @@ def figure_one(time = t, populations = pops):
 
 # Plot resource density vs consumer density
 def figure_two(populations = pops):
+    """Outputs resource density vs. consumer density"""
     f2 = p.figure()
 
     p.plot(pops[:,0], pops[:,1], "r-")
@@ -66,10 +71,11 @@ def figure_two(populations = pops):
     return None
 
 def main(argv):
+    """Main entry point of the program."""
     figure_one()
     figure_two()
     return None
 
-if (__name__ == "__main__"):
+if __name__ == "__main__":
     status = main(sys.argv)
     sys.exit(status)

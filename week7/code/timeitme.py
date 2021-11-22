@@ -1,3 +1,8 @@
+#!/usr/bin/env/ python3
+"""Example code to show the use of timeit"""
+__author__ = "Eamonn Murphy"
+__version__ = "0.0.1"
+
 ##############################################
 # loops vs. list comprehensions: which is faster?
 ###############################################

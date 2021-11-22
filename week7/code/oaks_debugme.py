@@ -1,6 +1,12 @@
+#!/usr/bin/env python3
+"""Reads an input file of tree names and outputs the oaks to a csv.
+Robust to slight typos and misspellings."""
+
+__author__ = 'Eamonn Murphy (eamonn.murphy21@imperial.ac.uk)'
+__version__ = '0.0.1'
+
 import csv
 import sys
-import doctest
 
 #Define function
 def is_an_oak(name):
@@ -13,7 +19,7 @@ def is_an_oak(name):
     True
 
     >>> is_an_oak('Quercuss cirrus')
-    True
+    False
 
     >>> is_an_oak(' Quercus cirrus')
     True
@@ -22,25 +28,26 @@ def is_an_oak(name):
     False
     """
 
-    return name.lower().strip().startswith('quercus')
+    return name.lower().strip().startswith('quercus ')
 
-def main(argv): 
+def main(argv):
+    """Writes only the oak species to a new csv, from a file of tree species."""
     f = open('../data/TestOaksData.csv','r')
     g = open('../data/JustOaksData.csv','w')
     taxa = csv.reader(f)
     csvwrite = csv.writer(g)
-    oaks = set()
     for row in taxa:
         print(row)
         print ("The genus is: ") 
         print(row[0] + '\n')
-        if is_an_oak(row[0]):
+        if is_an_oak(" ".join(row)):
             print('FOUND AN OAK!\n')
             csvwrite.writerow([row[0], row[1]])    
 
     return 0
     
 if (__name__ == "__main__"):
+    import doctest
+    doctest.testmod()
     status = main(sys.argv)
-
-doctest.testmod()
+    sys.exit(status)
