@@ -50,7 +50,7 @@ print(unique(new_data$ID[which(new_data$Citation == "Bernhardt, J.R., Sunday, J.
 qplot(Time, PopBio, data = subset(new_data, Citation == "Bernhardt, J.R., Sunday, J.M. and O’Connor, M.I., 2018. Metabolic theory and the temperature-size rule explain the temperature dependence of population carrying capacity. The American naturalist, 192(6), pp.687-697."),
       colour = as.character(Rep)) + theme(legend.position = "none") + geom_smooth(se = F)
 
-model_reps <- lm(PopBio ~ Time + as.character(Rep), data = subset(new_data, Citation == "Bernhardt, J.R., Sunday, J.M. and O’Connor, M.I., 2018. Metabolic theory and the temperature-size rule explain the temperature dependence of population carrying capacity. The American naturalist, 192(6), pp.687-697."))
+model_reps <- lm(PopBio ~ poly(Time, 2) + as.character(Rep), data = subset(new_data, Citation == "Bernhardt, J.R., Sunday, J.M. and O’Connor, M.I., 2018. Metabolic theory and the temperature-size rule explain the temperature dependence of population carrying capacity. The American naturalist, 192(6), pp.687-697."))
 summary(model_reps)
 
 # No significant differences between replicates

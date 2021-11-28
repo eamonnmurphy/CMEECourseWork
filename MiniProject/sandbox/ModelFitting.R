@@ -130,10 +130,13 @@ gompertz <- function(N_0, K, r_max, t_lag, t){
 
 gompertz_models <- vector("list", max(data$ID))
 gompertz_aics <- vector(length = max(data$ID))
+sample_ids <- c(1, 30, 60, 90, 120, 150, 180, 210, 240, 280)
+
+# try out multistart
 
 system.time(for (i in unique(data$ID)) {
   #browser()
-  reps <- 1000
+  reps <- 100
   id_models <- vector("list", reps)
   id_aics <- vector(length = reps)
   temp_data <- data[which(data$ID == i),]
@@ -143,10 +146,10 @@ system.time(for (i in unique(data$ID)) {
   r_start <- as.numeric(coef(log_model)["r"])
   t_lag_start <- temp_data$Time[which.max(diff(diff(temp_data$ln_PopBio)))]
   
-  N0_vect <- rnorm(reps, mean = N0_start, sd = N0_start)
-  K_vect <- runif(reps, min = 0, max = 1 * 10 ^ 10)
-  r_vect <- rnorm(reps, mean = r_start, sd = 5 * r_start)
-  t_lag_vect <- rnorm(reps, mean = t_lag_start, sd = 5 * t_lag_start)
+  N0_vect <- runif(reps, min = 0.5 * min(temp_data$ln_PopBio), max = 0.5 * max(temp_data$ln_PopBio))
+  K_vect <- runif(reps, min = 0.5 * min(temp_data$ln_PopBio), max = 0.5 * max(temp_data$ln_PopBio))
+  r_vect <- runif(reps, min = 1 * 10 ^-9, max = 1 * 10 ^-3)
+  t_lag_vect <- rnorm(reps, mean = t_lag_start, sd = 3 * t_lag_start)
   
   for (j in 1:reps) {
     temp_model <- NULL
@@ -154,20 +157,29 @@ system.time(for (i in unique(data$ID)) {
       N_0, K, r_max, t_lag, t = Time), data = temp_data,
       start = list(N_0 = N0_vect[j], K = K_vect[j], r_max = r_vect[j], 
                    t_lag = t_lag_vect[j])
+      #upper = c(1000 * max(temp_data$ln_PopBio), 1000 * max(temp_data$ln_PopBio), 1 * 10 ^ 9, 1 * 10 ^ 9)
+      #lower = c(-50, -50, -1 * 10 ^ 9, -1 * 10 ^ 9)
     ))
     id_models[[j]] <- temp_model
     try(id_aics[j] <- AIC(temp_model))
   }
   
   best_model <- id_models[[which.min(id_aics)]]
-  
   gompertz_models[[i]] <- best_model
   try(gompertz_aics[i] <- AIC(best_model))
 })
 
+coefs <- matrix(nrow = length(unique(data$ID)), ncol = 4)
+for (i in unique(data$ID)) {
+  try(coefs[i,1] <- as.numeric(coef(gompertz_models[[i]])["N_0"]))
+  try(coefs[i,2] <- as.numeric(coef(gompertz_models[[i]])["K"]))
+  try(coefs[i,3] <- as.numeric(coef(gompertz_models[[i]])["r_max"]))
+  try(coefs[i,4] <- as.numeric(coef(gompertz_models[[i]])["t_lag"]))
+}
+
 sum(gompertz_aics == 0)
 
-x <- 280
+x <- 184
 mod <- gompertz_models[[x]]
 plot_times <- seq(0, max(data$Time[which(data$ID == x)]), len = 200)
 N_0<- coef(mod)["N_0"]
