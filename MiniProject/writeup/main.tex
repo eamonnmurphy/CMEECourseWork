@@ -1,0 +1,156 @@
+\documentclass[11pt,a4wide,titlepage]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{setspace}
+\usepackage{lineno}
+\usepackage[a4paper]{geometry}
+\usepackage{csvsimple}
+\usepackage[nottoc]{tocbibind}
+\usepackage{natbib}
+\usepackage{amsmath}
+\bibliographystyle{plainnat}
+\onehalfspacing
+
+\begin{document}
+\begin{titlepage}
+	\begin{center}
+		\vspace*{1cm}
+		
+		\begin{Large}
+			\textbf{Phenomenological Models Outperform Mechanistic Models\\
+				for Estimation of Messy Biological Data}
+		\end{Large}
+		
+		
+		\vspace{1.5cm}
+		
+		\textbf{Eamonn Murphy}
+		
+		\vfill
+		
+		Department of Life Sciences\\
+		Silwood Park\\
+		Imperial College London\\
+		\vspace{\baselineskip}
+		Friday 3rd December 2021
+		\vspace{\baselineskip}
+		Word Count: 
+		\vfill
+		
+	\end{center}
+\end{titlepage}
+
+\section*{Introduction}
+Modelling population growth in bacteria is an important problem, as it allows for prediction of bacterial numbers in food vectors etc. This problem has been very well covered in the literature, and many data-sets of bacterial growth are available. As well as this, a large number of models have been proposed for bacterial growth, including a number of linear and non-linear models. In this mini-project, I have attempted to fit a number of phenomenological and mechanistic models to a provided data-set of bacterial growth, taken from 10 different published papers. These data include a variety of different species, growth mediums and temperatures.
+
+There are a number of important proposed parameters which help to explain the growth of a bacterial population. The first is that, upon introduction to a new environment, population size tends to follow a sigmoidal (or S-shaped) curve. This happens as bacteria must first adapt to their new environment before beginning to grow and expand. These adaptations can include up-regulating new sets of genes (such as the lac operon when they go from a glucose to lactose environment). The parameters that explain the shape of this curve include the initial population size (N0), the length of the lag phase, the highest rate of population growth reached ($r_{max}$) and the carrying capacity  of the environment(K). The carrying capacity is the maximum possible population that can be sustained in that environment, and explains underlying variables such as the nutrient density and type, the size of the environment, competition, and also other underlying characteristics of the bacterial species that you are studying.
+
+The simplest set of models which can explain bacterial growth are linear quadratic and cubic models. These are of the form: 
+\[N_t = B_2t^2 + B_1t + B_0\]
+where t refers to the time. These are what would normally be referred to as phenomenological models; they do not attempt to apply any of our knowledge about how bacterial populations grow and what determines it, and simply try to find a best fit to the existing data. However, there is some form of mechanistic explanation to any reasonably fitting model; for example, the intercept $B_0$ will likely be an approximation of the starting population size, while the slope $B_1$ will be a rough approximation of the rate of growth during the exponential phase.
+
+There are also quite a large number of non-linear mechanistic models which have been developed to try to explain bacterial growth. One of the simplest is the logisitic equation, which takes the form
+\[N_t = \frac{N_0Ke^{rt}}{K + N_0(e^{rt} - 1)}\]
+where $N_0$ is initial population size, $K$ is carrying capacity and $r$ is the maximum rate of population growth.
+
+\section*{Methods}
+The population growth data was obtained from 10 different papers \citep{baeGrowthCharacteristicsBiofilm2014a,bernhardtMetabolicTheoryTemperatureSize2018,galarzPredictingBacterialGrowth2016,gillGrowthEscherichiaColi1991,phillipsRelationTemperatureGrowth1987,rothContinuityPsychrophilicMesophilic1962,silvaModellingGrowthLactic2018,sivonenEffectsLightTemperature1990,stannardTemperatureGrowthRelationships1985,zwieteringModelingBacterialGrowth1994}. The analysis on the resulting dataset was carried out using 3 scripting languages, Python, R and Bash. Initial data visualisation and wrangling was carried out using Python. Following this, further data wrangling was carried out in R, and model fitting for the different proposed models was carried out.\newline
+
+\begin{center}
+	Table 1: Format of Columns in Dataset \newline
+	\csvreader[tabular=|c|c|,
+	table head = \hline,
+	late after line=\\\hline]%
+	{../data/LogisticGrowthMetaData.csv}{}{\csvlinetotablerow}
+	\newline
+\end{center}
+
+A number of important choices were made when cleaning the data. First, a unique ID was assigned to each combination of citation, temperature and species, in order to identify separately each population / experiment. Following this, it was noticed that there were a number of negative values for population size in the dataset. The IDs which had the negative population values were removed from consideration, as I assumed these must have been measurement errors(since theyt are biologically impossible), and thus all of the population size measurements in that dataset could be suspect. It was also noticed that there were a number of negative values for time. This is more plausibly explainable, as they may have started the clock at, for example, -24 hours upon inoculation. In order to deal with this, I standardised the time in each subset so that the smallest time value was always equal to zero and other times were proportional to that.
+
+The models were fit using the standard linear and non-linear model fits in R. Start values were calculated for the logistic fit as follows: 
+
+\begin{center}
+	\def\arraystretch{2}
+	\begin{tabular}{|c|c|c|}
+		\hline
+		Model & Formula & $k$\\
+		\hline
+		Quadratic & $N_t = B_2t^2 + B_1t + B_0$ & 3\\
+		Cubic & $N_t = B_3t^3 + B_2t^2 + B_1t + B_0$ & 4\\
+		Logistic & $N_t = \frac{N_0Ke^{rt}}{K + N_0(e^{rt} - 1)}$ & 3\\
+		Gompertz & $\ln(N_t) = N_0 + (K - N_0)e^{-e^{re\frac{t_{lag} - t}{(K - N_0)\ln(10)} + 1}}$ & 4\\
+		\hline
+	\end{tabular}
+\end{center}
+
+
+
+\subsection*{Software and Packages}
+\textbf{Software Versions}
+\begin{itemize}
+    \item Ubuntu - 20.04.3 LTS
+    \item Python - 3.8.10
+    \item R - 4.1.1
+\end{itemize}
+
+
+\noindent
+\textbf{Packages and Dependencies}
+\begin{itemize}
+    \item Python
+    \begin{itemize}
+        \item pandas
+        \item scipy
+        \item matplotlib
+        \item seaborn
+    \end{itemize}
+    \item R
+    \begin{itemize}
+        \item ggplot2
+        \item minpack.lm
+    \end{itemize}
+\end{itemize}
+
+
+
+\section*{Results}
+Four models were fit to the data: quadratic and cubic linear fits, and two non-linear models, logistic and Gompertz. These models were then compared against each other for each ID, using AIC scores. A table was generated with the tallies of how many IDs each model was most successful for.
+
+A number of possible metrics to compare the models were considered. Akaike Information Criteria (AIC) is widely used to compare models, and gives an estimation of the prediction error. A modified version of AIC can be used when sample size is small, named AICc (AIC with \underline{c}orrection for small sample sizes). This method was developed as there is a substantial probability of overfitting using standard AIC with small sample sizes. Overfitting refers to the situation where a model is overly sensitive to the random fluctuations of that specific dataset, and thus has little predictive or diagnostic power. However, the problem with AICc in this sample is that there are cases where $k + 1 \ge n$ (where $k$ is the number of parameters and $n$ is the sample size), meaning that the denominator could be 0 or a negative number. This means that the penalisation term either is undefined or becomes negative, whereas with an extremely low n like this it should add a large penalty.
+
+Another possible method is Bayesian Information Criteria (BIC). BIC is closely related to AIC, but uses a different penalty for the number of parameters, which is larger in most cases \cite{stoicaModelorderSelectionReview2004}. Given that sample size is very small in many of the population subsets (117 cases where $n < 10$), and the outlined problems with AICc in this dataset, BIC was chosen as the most suitable estimation of model prediction error. 
+
+We can derive the situations where the penalty for additional parameters will be greater in AIC than BIC. This occurs when
+\begin{gather}
+2 > \ln{n}\\
+n < e^2
+\end{gather}
+Since $n < e^2$ in 75 cases, 
+
+\begin{center}
+\def\arraystretch{1.5}
+\begin{tabular}{|c|c|}
+	\hline
+	AIC & $2k - 2\ln(\hat{L})$\\
+	\hline
+	BIC & $k\ln(n) - 2\ln(\hat{L})$\\
+	\hline
+	AICc & $AIC + \frac{2k^2 + 2k}{n - k - 1}$\\
+	\hline
+\end{tabular}
+\end{center}
+%\newline
+
+
+\begin{center}
+	Table 2: Tallies of numbers of models for which that model type had the lowest AIC\newline
+	\csvautotabular{../results/bic_tallies.csv}
+\end{center}
+
+As we can see, the quadratic model was the best fit for the highest number of IDs, followed by the Cubic and Gompertz models. For the cubic model in particular, care was taken to discard instances where the model had a "perfect fit" due to the number of data points being equal to the number of variables. For the Gompertz model, a fit was found for only 96 of the IDs, whereas cubic and quadratic had 281 fits, and logistic only one less at 280. 
+
+\section*{Discussion}
+
+
+\bibliography{MiniProject}
+
+\end{document}

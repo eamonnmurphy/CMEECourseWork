@@ -10,3 +10,11 @@ week3/code/Florida.pdf
 **/**/*.tif
 **/week5/data/*
 **/**/__pycache__/*
+*.blg
+*.aux
+*.bbl
+*.log
+*.run.xml
+*.synctex.gz
+*.bcf
+*.run.xml
