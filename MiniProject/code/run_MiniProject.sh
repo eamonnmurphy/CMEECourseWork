@@ -7,4 +7,6 @@ Rscript Rexplore.R
 
 Rscript ModelFitting.R
 
+Rscript Plotting.R
+
 latexmk -pdf -output-directory="../results/" ../writeup/main.tex

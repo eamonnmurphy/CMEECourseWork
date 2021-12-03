@@ -19,3 +19,4 @@ week3/code/Florida.pdf
 *.bcf
 *.run.xml
 MiniProject/writeup/main.pdf
+MiniProject/writeup/*.pdf
