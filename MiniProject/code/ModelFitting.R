@@ -2,6 +2,7 @@ rm(list = ls())
 library(ggplot2)
 library(minpack.lm)
 library(AICcmodavg)
+library(scales)
 data <- read.csv("../data/WrangledDataSet.csv")
 
 ######### Calculate a quadratic model for each ID, store models and aiccs #####
@@ -267,8 +268,12 @@ tallies <- c(length(aicc_compare$best[which(aicc_compare$best == 1)]),
              length(aicc_compare$best[which(aicc_compare$best == 3)]),
              length(aicc_compare$best[which(aicc_compare$best == 4)]))
 
+percent <- c(tallies[1] / sum(tallies), tallies[2] / sum(tallies),
+             tallies[3] / sum(tallies), tallies[4] / sum(tallies))
+
 tally_table <- data.frame(Model = c("Quadratic", "Cubic", "Logistic", "Gompertz"),
-                          Tallies = tallies)
+                          Tally = tallies,
+                          Percentage = scales::percent(percent))
 
 write.csv(tally_table, "../results/aicc_tallies.csv", quote = FALSE, row.names = F)
 
