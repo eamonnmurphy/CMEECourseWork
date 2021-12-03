@@ -7,6 +7,8 @@ Rscript Rexplore.R
 
 Rscript ModelFitting.R
 
+mkdir ../results/scatterplots
+
 Rscript Plotting.R
 
 cd ../writeup

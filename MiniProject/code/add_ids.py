@@ -1,5 +1,4 @@
 import pandas as pd
-import scipy as sc
 
 growth_data = pd.read_csv("../data/LogisticGrowthData.csv")
 meta_data = pd.read_csv("../data/LogisticGrowthMetaData.csv")
