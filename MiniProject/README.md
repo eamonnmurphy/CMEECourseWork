@@ -22,7 +22,8 @@ In code directory
 
 ## Writeup
 In writeup directory.
-Main.tex - Final LaTeX report for the MiniProject submission
+* Main.tex - Final LaTeX report for the MiniProject submission
+* MiniProject.bib - Bibliography file for generation of references
 
 ## Data
 In data directory

@@ -160,8 +160,10 @@ A number of possible metrics to compare the models were considered. Akaike Infor
 	AIC & $2k - 2\ln(\hat{L})$\\
 	BIC & $k\ln(n) - 2\ln(\hat{L})$\\
 	AICc & $AIC + \frac{2k^2 + 2k}{n - k - 1}$\\
+	$\ln[\hat{L}(\theta|x)]$ & $-\frac{n}{2}\ln(\frac{RSS}{n})$\\
 	\hline
 \end{tabular}
+\subcaption*{$k$ - number of parameters; $n$ - sample size; $\hat{L}$ - Estimated likelihood; $RSS$ - Residual Sum of Squares}
 \end{center}
 \end{table}
 
@@ -173,7 +175,7 @@ In order to compare model performance across the whole dataset, a simple tally w
 \begin{figure}[H]
 	\begin{center}
 		\includegraphics{../results/tally_bar.png}\\
-		\caption{Number of subsets for which each model was the best fit by AICc}\label{tally}
+		\caption{Number of subsets for which each model was the best fit by AICc. Each model is labelled with the percentage of the dataset for which it is the best fit.}\label{tally}
 	\end{center}
 	\end{figure}
 
@@ -187,7 +189,7 @@ The above results display some interesting features and distinctions of phenomen
 \begin{figure}
 	\begin{center}
 		\includegraphics{../results/scatterplots/246.png}\\
-		\caption{Example of typical messy population data from subset with ID 246}\label{Messy}
+		\caption{Example of typical messy population data from subset ID 246}\label{Messy}
 	\end{center}
 	\end{figure}
 
@@ -197,6 +199,8 @@ On the other hand, the mechanistic models have a certain predetermined shape bec
 Another advantage of mechanstic models is that they allow for more interpretation and understanding. We may be able to look at the parameters for two different datasets in a mechanistic model, and therefore make some deductions about the differences between the datasets. For example, we may be able to state that one species tends to have a longer lag phase than another, or that the carrying capacity of one medium is less than anothers. These kinds of deductions are not possible with phenomenological models, as it is unclear what the underlying meaning of the parameters is in a biological sense. 
 
 Regarding the predictive power of the models, it is difficult to tell which will be more powerful. In one sense, it is possible that the linear models are more susceptible to overfitting, since the model has more freedom to vary its shape to match the data. However, since these models do perform better by the AICc metric, it is also possible that the non-specified parameters have more freedom to reflect underlying structures in the data which are not captured by the specified metrics. In any case, it is not possible to assess predictive validity using this type of study design. To assess predictive power, you must withhold a portion of the dataset to test your pre-fit model upon.
+
+By fitting the 4 models above to a real biological dataset, filled with messy data, errors and biologically implausible values, I was able to show the relative strengths of mechanistic and phenomenological models. Although the mechanistic models, Gompertz in particular, performed reasonably well, they were unable to explain the unexpected growth curves which could be found in this dataset. On the other hand, the phenomenological models, with more freedom to match their curves to the fluctuations of the dataset, performed better. This indicates that phenomenological models are better than mechanistic when used to estimate messy biological data. Besides being less able to explain experimental and measurement errors, it is likely that the mechanistic models above, Logistic and Gompertz, do not meet the basic criteria for sufficiency of parameters outlined in \cite{levinsSTRATEGYMODELBUILDING1966} seminal paper.
 
 \bibliography{../writeup/MiniProject}
 

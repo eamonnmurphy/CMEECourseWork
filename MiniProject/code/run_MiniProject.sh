@@ -15,8 +15,6 @@ cd ../writeup
 
 texcount -1 -sum=1,2 main.tex > main-words.sum
 
-#latexmk -pdf -output-directory="../results/" ../writeup/main.tex
-
 # Process input for other cases
 pdflatex main.tex
 bibtex main
