@@ -7,6 +7,7 @@
 \usepackage[nottoc]{tocbibind}
 \usepackage{natbib}
 \usepackage{amsmath}
+\usepackage{graphicx}
 \bibliographystyle{plainnat}
 \onehalfspacing
 
@@ -40,15 +41,28 @@
 \end{titlepage}
 
 \section*{Introduction}
-Modelling population growth in bacteria is an important problem, as it allows for prediction of bacterial numbers in food vectors etc. This problem has been very well covered in the literature, and many data-sets of bacterial growth are available. As well as this, a large number of models have been proposed for bacterial growth, including a number of linear and non-linear models. In this mini-project, I have attempted to fit a number of phenomenological and mechanistic models to a provided data-set of bacterial growth, taken from 10 different published papers. These data include a variety of different species, growth mediums and temperatures.
+Modelling population growth in bacteria is an important problem, as it allows for many applications, including prediction of bacterial numbers in food, which is important for spoilage. As well as prediction, population growth models can help to improve our mechanistic understanding of bacterial growth. This problem has been very well covered in the literature, and many data-sets of bacterial population growth are available. A large number of models have been proposed for bacterial growth, including a number of linear and non-linear models. In this mini-project, I have attempted to fit a number of phenomenological and mechanistic models to a provided data-set of bacterial growth, taken from 10 different published papers. These data include a variety of species, growth mediums and temperatures.
 
-There are a number of important proposed parameters which help to explain the growth of a bacterial population. The first is that, upon introduction to a new environment, population size tends to follow a sigmoidal (or S-shaped) curve. This happens as bacteria must first adapt to their new environment before beginning to grow and expand. These adaptations can include up-regulating new sets of genes (such as the lac operon when they go from a glucose to lactose environment). The parameters that explain the shape of this curve include the initial population size (N0), the length of the lag phase, the highest rate of population growth reached ($r_{max}$) and the carrying capacity  of the environment(K). The carrying capacity is the maximum possible population that can be sustained in that environment, and explains underlying variables such as the nutrient density and type, the size of the environment, competition, and also other underlying characteristics of the bacterial species that you are studying.
+There are a number of important proposed parameters which help to explain the growth of a bacterial population. The first is that, upon introduction to a new environment, population size tends to follow a sigmoidal (or S-shaped) curve. This happens as bacteria must first adapt to their new environment before beginning to grow and expand. These adaptations can include up-regulating new sets of genes (such as the lac operon when they go from a glucose to lactose environment). The parameters that explain the shape of this curve include the initial population size ($N0$), the length of the lag phase (modelled by $t_{lag}$), the highest rate of population growth reached ($r_{max}$) and the carrying capacity  of the environment($K$). The carrying capacity is the maximum possible population that can be sustained in that environment, and explains underlying variables such as the nutrient density and type, the size of the environment, competition, and also other underlying characteristics of the bacterial species that you are studying.
 
-The simplest set of models which can explain bacterial growth are linear quadratic and cubic models. These are of the form: 
-\[N_t = B_2t^2 + B_1t + B_0\]
-where t refers to the time. These are what would normally be referred to as phenomenological models; they do not attempt to apply any of our knowledge about how bacterial populations grow and what determines it, and simply try to find a best fit to the existing data. However, there is some form of mechanistic explanation to any reasonably fitting model; for example, the intercept $B_0$ will likely be an approximation of the starting population size, while the slope $B_1$ will be a rough approximation of the rate of growth during the exponential phase.
+The simplest set of models which can explain bacterial growth are linear quadratic and cubic models. These are what would normally be referred to as phenomenological models; they do not attempt to apply any of our knowledge about how bacterial populations grow and what determines it, and simply try to find a best fit to the existing data. However, there is some form of mechanistic explanation to any reasonably fitting model; for example, the intercept $B_0$ will likely be an approximation of the starting population size, while the slope $B_1$ will be a rough approximation of the rate of growth during the exponential phase.
 
-There are also quite a large number of non-linear mechanistic models which have been developed to try to explain bacterial growth. One of the simplest is the logisitic equation, which takes the form
+\begin{center}
+	Table 1: Equations for the Bacterial Growth Models
+	\def\arraystretch{2}
+	\begin{tabular}{c|c|c}
+		Model & Formula & $k$ (number of parameters)\\
+		\hline
+		Quadratic & $N_t = B_2t^2 + B_1t + B_0$ & 3\\
+		Cubic & $N_t = B_3t^3 + B_2t^2 + B_1t + B_0$ & 4\\
+		Logistic & $N_t = \frac{N_0Ke^{rt}}{K + N_0(e^{rt} - 1)}$ & 3\\[2ex]
+		Gompertz & $\ln(N_t) = N_0 + (K - N_0)e^{-e^{re\frac{t_{lag} - t}{(K - N_0)\ln(10)} + 1}}$ & 4\\[2ex]
+	\end{tabular}
+\end{center}
+\textit{$t$ - time; $N_t$ - population size at time t; $K$ - carrying capacity; $r$ - highest rate of population growth reached; $t_{lag}$ - delay until population growth, or x-axis intercept of the tangent $r$}
+
+
+There are also quite a large number of non-linear mechanistic models which have been developed to try to explain bacterial growth. One of the simplest is the logistic equation, which takes the form
 \[N_t = \frac{N_0Ke^{rt}}{K + N_0(e^{rt} - 1)}\]
 where $N_0$ is initial population size, $K$ is carrying capacity and $r$ is the maximum rate of population growth.
 
@@ -64,29 +78,20 @@ The population growth data was obtained from 10 different papers \citep{baeGrowt
 	\newline
 \end{center}
 
-A number of important choices were made when cleaning the data. First, a unique ID was assigned to each combination of citation, temperature and species, in order to identify separately each population / experiment. Following this, it was noticed that there were a number of negative values for population size in the dataset. The IDs which had the negative population values were removed from consideration, as I assumed these must have been measurement errors(since they are biologically impossible), and thus all of the population size measurements in that dataset could be suspect. It was also noticed that there were a number of negative values for time. This is more plausibly explainable, as they may have started the clock at, for example, -24 hours upon inoculation. In order to deal with this, I standardised the time in each subset so that the smallest time value was always equal to zero and other times were proportional to that.
+\subsection*{Data Cleaning and Preparation}
+A number of important choices were made when cleaning the data. First, a unique ID was assigned to each combination of citation, temperature and species, in order to identify separately each population / experiment. Following this, the subsets containing negative population values were removed from consideration, as I assumed these must have been measurement errors (since they are biologically impossible), and thus all of the population size measurements in that dataset could be suspect. I further cleaned the data by removing subsets with $\le 6$ data points. Given that the models have up to 4 parameters, models fit on data with only an equal or slightly greater number of data points will be overfit to random fluctuations in the data. Many of the other subsets will also encounter this problem given the sample sizes, but given that 41\% of the populations have less than 10 samples, I decided to draw the cutoff at 6. I standardised the time in each subset so that the smallest time value was always equal to zero and other times were proportional to that. Negative values for time are plausible, as they may have started the clock at, for example, -24 hours upon inoculation.
 
+One of the papers \citep{bernhardtMetabolicTheoryTemperatureSize2018} included experimental replicates. I first tested that the replicates were not different from each other. In order to do this, I fit a simple quadratic regression model on time with replicate as an extra term. No significant differences were found (range of p $0.49 - 0.94$). Therefore, I decided to include the data as single subsets, discarding the replicate information from further modelling. Many of the models should be fit on the natural log of the population size. However, there were some population size values of 0 in the dataset. To deal with this, a small positive constant was added to all population values in the affected subsets, which is a common method as outlined in \cite{bellegoDealingLogsZeros2021}.
 
-
-The models were fit using the standard linear and non-linear model fits in R. Start values were calculated for the logistic fit as follows: 
-
-
-
+\subsection*{Model Fitting}
+Quadratic and cubic models were fit using standard linear least squares fitting in R (i.e. minimising the sum of the squares). I fit the Logistic and Gompertz models using non-linear least squares, and start values were needed for the free parameters. These were estimated as follows for the Logistic model:
 \begin{center}
-	\def\arraystretch{2}
-	\begin{tabular}{|c|c|c|}
-		\hline
-		Model & Formula & $k$\\
-		\hline
-		Quadratic & $N_t = B_2t^2 + B_1t + B_0$ & 3\\
-		Cubic & $N_t = B_3t^3 + B_2t^2 + B_1t + B_0$ & 4\\
-		Logistic & $N_t = \frac{N_0Ke^{rt}}{K + N_0(e^{rt} - 1)}$ & 3\\[2ex]
-		Gompertz & $\ln(N_t) = N_0 + (K - N_0)e^{-e^{re\frac{t_{lag} - t}{(K - N_0)\ln(10)} + 1}}$ & 4\\[2ex]
-		\hline
-	\end{tabular}
+\begin{tabular}{cc}
+	$N_0$ & Minimum population size in subset\\
+	$K$ & $2\times$ maximum population size in subset\\
+	$r_{max}$ & Iteratively determined preset value\\
+\end{tabular}
 \end{center}
-
-
 
 \subsection*{Software and Packages}
 \textbf{Software Versions}
@@ -117,40 +122,28 @@ The models were fit using the standard linear and non-linear model fits in R. St
 
 
 \section*{Results}
-Four models were fit to the data: quadratic and cubic linear fits, and two non-linear models, logistic and Gompertz. These models were then compared against each other for each ID, using AIC scores. A table was generated with the tallies of how many IDs each model was most successful for.
-
-A number of possible metrics to compare the models were considered. Akaike Information Criteria (AIC) is widely used to compare models, and gives an estimation of the prediction error. A modified version of AIC can be used when sample size is small, named AICc (AIC with \underline{c}orrection for small sample sizes). This method was developed as there is a substantial probability of overfitting using standard AIC with small sample sizes. Overfitting refers to the situation where a model is overly sensitive to the random fluctuations of that specific dataset, and thus has little predictive or diagnostic power. However, the problem with AICc in this sample is that there are cases where $k + 1 \ge n$ (where $k$ is the number of parameters and $n$ is the sample size), meaning that the denominator could be 0 or a negative number. This means that the penalisation term either is undefined or becomes negative, whereas with an extremely low n like this it should add a large penalty.
-
-Another possible method is Bayesian Information Criteria (BIC). BIC is closely related to AIC, but uses a different penalty for the number of parameters, which is larger in most cases \citep{stoicaModelorderSelectionReview2004}. Given that sample size is very small in many of the population subsets (117 cases where $n < 10$), and the outlined problems with AICc in this dataset, BIC was chosen as the most suitable estimation of model prediction error. 
-
-We can derive the situations where the penalty for additional parameters will be greater in AIC than BIC. This occurs when
-\begin{gather}
-2 > \ln{n}\\
-n < e^2
-\end{gather}
-Since $n < e^2$ in 75 cases, 
+A number of possible metrics to compare the models were considered. Akaike Information Criteria (AIC) and Bayesian Information Criterion (BIC) are two information theory methods which use the estimated log-likelihood of a model for comparison, giving an estimate of the prediction error. Lower values mean that the model is a better fit for the data. A modified version of AIC can be used when sample size is small, named AICc (AIC with \underline{c}orrection for small sample sizes). This method was developed as there is a substantial probability of overfitting using standard AIC with small sample sizes. Overfitting refers to the situation where a model is overly sensitive to the random fluctuations of that specific dataset, and thus has little predictive or diagnostic power. Given the prevalence of small sample sizes in this dataset (only two subsets with $>100$ data points), AICc seemed the most appropriate measure of model performance.
 
 \begin{center}
 \def\arraystretch{1.5}
 \begin{tabular}{|c|c|}
 	\hline
 	AIC & $2k - 2\ln(\hat{L})$\\
-	\hline
 	BIC & $k\ln(n) - 2\ln(\hat{L})$\\
-	\hline
 	AICc & $AIC + \frac{2k^2 + 2k}{n - k - 1}$\\
 	\hline
 \end{tabular}
 \end{center}
-%\newline
+
+In order to compare model performance across the whole dataset, a simple tally was calculated, which counted the number of subsets for which each model was the best performing by AICc. 
 
 
 \begin{center}
-	Table 2: Tallies of numbers of models for which that model type had the lowest AIC\newline
-	\csvautotabular{../results/bic_tallies.csv}
+	\includegraphics{../results/tally_bar.png}\\
+	Figure 1: Number of subsets for which each model was the best fit by AICc
 \end{center}
 
-As we can see, the quadratic model was the best fit for the highest number of IDs, followed by the Cubic and Gompertz models. For the cubic model in particular, care was taken to discard instances where the model had a "perfect fit" due to the number of data points being equal to the number of variables. For the Gompertz model, a fit was found for only 96 of the IDs, whereas cubic and quadratic had 281 fits, and logistic only one less at 280. 
+
 
 \section*{Discussion}
 

@@ -4,39 +4,39 @@ library(minpack.lm)
 library(AICcmodavg)
 data <- read.csv("../data/WrangledDataSet.csv")
 
-######### Calculate a quadratic model for each ID, store models and bics #####
+######### Calculate a quadratic model for each ID, store models and aiccs #####
 quad_models <- vector("list", max(data$ID))
-quad_bics <- rep(Inf, max(data$ID))
+quad_aiccs <- rep(Inf, max(data$ID))
 for (i in unique(data$ID)) {
   #browser()
    temp_data <- data[which(data$ID == i),]
    try(temp_model <- lm(ln_PopBio ~ poly(Time, 2), temp_data))
    quad_models[[i]] <- temp_model
-   quad_bics[i] <- BIC(temp_model)
+   quad_aiccs[i] <- AICc(temp_model)
 }
 
 # # Plot the data for the best and worst model
-# max_bic <- which.max(quad_bics)
-# predicted_worst <- predict.lm(quad_models[[max_bic]], data[which(data$ID == max_bic),])
-# p <- ggplot(data[which(data$ID == max_bic),], aes(Time, log(PopBio))) + geom_point() +
-#   geom_line(aes(data$Time[which(data$ID == max_bic)], predicted_worst))
+# max_aicc <- which.max(quad_aiccs)
+# predicted_worst <- predict.lm(quad_models[[max_aicc]], data[which(data$ID == max_aicc),])
+# p <- ggplot(data[which(data$ID == max_aicc),], aes(Time, log(PopBio))) + geom_point() +
+#   geom_line(aes(data$Time[which(data$ID == max_aicc)], predicted_worst))
 # p
 # 
-# min_bic <- which.min(quad_bics)
-# predicted_best <- predict.lm(quad_models[[min_bic]], data[which(data$ID == min_bic),])
-# q <- ggplot(data[which(data$ID == min_bic),], aes(Time, log(PopBio))) + geom_point() +
-#   geom_line(aes(data$Time[which(data$ID == min_bic)], predicted_best))
+# min_aicc <- which.min(quad_aiccs)
+# predicted_best <- predict.lm(quad_models[[min_aicc]], data[which(data$ID == min_aicc),])
+# q <- ggplot(data[which(data$ID == min_aicc),], aes(Time, log(PopBio))) + geom_point() +
+#   geom_line(aes(data$Time[which(data$ID == min_aicc)], predicted_best))
 # q
 
-####### Calculate a cubic model for each ID, store models and bics ######
+####### Calculate a cuaicc model for each ID, store models and aiccs ######
 cubic_models <- vector("list", max(data$ID))
-cubic_bics <- rep(Inf, max(data$ID))
+cubic_aiccs <- rep(Inf, max(data$ID))
 for (i in unique(data$ID)) {
   #browser()
   temp_data <- data[which(data$ID == i),]
   try(temp_model <- lm(PopBio ~ poly(Time, 3), temp_data))
   cubic_models[[i]] <- temp_model
-  cubic_bics[i] <- BIC(temp_model)
+  cubic_aiccs[i] <- AICc(temp_model)
 }
 
 # # Plot the data for the best and worst model
@@ -58,11 +58,10 @@ logistic <- function(N0, K, r, t){
 }
 
 logistic_models <- vector("list", max(data$ID))
-logistic_bics <- rep(Inf, max(data$ID))
+logistic_aiccs <- rep(Inf, max(data$ID))
 # logistic_summaries <- vector("list", max(data$ID))
 
 for (i in unique(data$ID)) {
-  #browser()
   temp_model <- 0
   temp_data <- data[which(data$ID == i),]
   if (min(temp_data$Time == 0)) {
@@ -74,41 +73,40 @@ for (i in unique(data$ID)) {
   r_start <- 0.00000001
   try(temp_model <- nlsLM(PopBio ~ logistic(N0, K, r, Time), 
                       start = list(N0 = N0_start, K = K_start, r = r_start),
-                      data = temp_data))
+                      data = temp_data, control = nls.lm.control(maxiter = 100)))
                       # lower = c(-10000 * max(data$PopBio), -10000 * max(data$PopBio),
                       #           max(data$PopBio) * -10000),
                       # upper = c(10000 * max(data$PopBio), max(data$PopBio) * 10000, 
                       #           max(data$PopBio) * 10000)))
   logistic_models[[i]] <- temp_model
-  try(logistic_bics[i] <- BIC(temp_model))
-  #logistic_summaries[i] <- summary(temp_model)
+  try(logistic_aiccs[i] <- AICc(temp_model))
 }
 
-sum(logistic_bics != Inf)
+sum(logistic_aiccs != Inf)
 
 # # # Plot the data for the best and worst model
-# max_bic <- which.max(logistic_bics)
-# worst_mod <- logistic_models[[max_bic]]
-# plot_times <- seq(0, max(data$Time[which(data$ID == max_bic)]), len = 200)
+# max_aicc <- which.max(logistic_aiccs)
+# worst_mod <- logistic_models[[max_aicc]]
+# plot_times <- seq(0, max(data$Time[which(data$ID == max_aicc)]), len = 200)
 # N0_worst <- coef(worst_mod)["N0"]
 # r_worst <- coef(worst_mod)["r"]
 # K_worst <- coef(worst_mod)["K"]
 # predicted_worst <- N0_worst * K_worst * exp(plot_times * r_worst) /
 #   (K_worst + N0_worst * (exp(r_worst * plot_times) -1))
 # 
-# plot(data$Time[which(data$ID == max_bic)], data$ln_PopBio[which(data$ID == max_bic)])
+# plot(data$Time[which(data$ID == max_aicc)], data$ln_PopBio[which(data$ID == max_aicc)])
 # lines(plot_times, log(predicted_worst))
 # 
-# min_bic <- which.min(logistic_bics)
-# best_mod <- logistic_models[[min_bic]]
-# plot_times <- seq(0, max(data$Time[which(data$ID == min_bic)]), len = 200)
+# min_aicc <- which.min(logistic_aiccs)
+# best_mod <- logistic_models[[min_aicc]]
+# plot_times <- seq(0, max(data$Time[which(data$ID == min_aicc)]), len = 200)
 # N0_best <- coef(best_mod)["N0"]
 # r_best <- coef(best_mod)["r"]
 # K_best <- coef(best_mod)["K"]
 # predicted_best <- N0_best * K_best * exp(plot_times * r_best) /
 #   (K_best + N0_best * (exp(r_best * plot_times) -1))
 # 
-# plot(data$Time[which(data$ID == min_bic)], data$ln_PopBio[which(data$ID == min_bic)])
+# plot(data$Time[which(data$ID == min_aicc)], data$ln_PopBio[which(data$ID == min_aicc)])
 # lines(plot_times, log(predicted_best))
 
 ##### Fit Gompertz model ######
@@ -142,13 +140,13 @@ for (i in unique(data$ID)) {
 }
 
 gompertz_models <- vector("list", max(data$ID))
-gompertz_bics <- rep(Inf, max(data$ID))
+gompertz_aiccs <- rep(Inf, max(data$ID))
 
 # system.time(try(for (i in unique(data$ID)) {
 #   #browser()
 #   reps <- 100
 #   id_models <- vector("list", reps)
-#   id_bics <- vector(length = reps)
+#   id_aiccs <- vector(length = reps)
 #   temp_data <- data[which(data$ID == i),]
 #   log_model <- logistic_models[[i]]
 #   try(N0_start <- log(as.numeric(coef(log_model)["N0"])))
@@ -171,19 +169,19 @@ gompertz_bics <- rep(Inf, max(data$ID))
 #       #lower = c(-50, -50, -1 * 10 ^ 9, -1 * 10 ^ 9)
 #     ), silent = T)
 #     id_models[[j]] <- temp_model
-#     try(id_bics[j] <- BIC(temp_model), silent = TRUE)
+#     try(id_aiccs[j] <- AICc(temp_model), silent = TRUE)
 #   }
 #   
-#   try(best_model <- id_models[[which.min(id_bics)]])
+#   try(best_model <- id_models[[which.min(id_aiccs)]])
 #   try(gompertz_models[[i]] <- best_model)
-#   try(gompertz_bics[i] <- BIC(best_model), silent = TRUE)
+#   try(gompertz_aiccs[i] <- AICc(best_model), silent = TRUE)
 # }))
 
 system.time(try(for (i in unique(data$ID)) {
   #browser()
   reps <- 100
   id_models <- vector("list", reps)
-  id_bics <- rep(Inf, length = reps)
+  id_aiccs <- rep(Inf, length = reps)
   temp_data <- data[which(data$ID == i),]
   log_model <- logistic_models[[i]]
   try(N0_start <- log(as.numeric(coef(log_model)["N0"])))
@@ -201,17 +199,17 @@ system.time(try(for (i in unique(data$ID)) {
             try(K_vect <- rnorm(1, mean = 2 * max(temp_data$ln_PopBio), sd = 6 * abs(max(temp_data$ln_PopBio))), silent = T)
             try(r_vect <- runif(1, min = 10 ^ -10, max = 10 ^ -2), silent = T)
             try(t_lag_vect <- rnorm(1, mean = t_lag_start, sd = 3 * abs(t_lag_start)), silent = T)
-            try(nlsLM(ln_PopBio ~ gompertz(
-      N_0, K, r_max, t_lag, t = Time), data = temp_data,
+            try(nlsLM(ln_PopBio ~ gompertz(N_0, K, r_max, t_lag, t = Time), 
+                      data = temp_data, control = nls.lm.control(maxiter = 100),
       start = list(N_0 = N0_vect, K = K_vect, r_max = r_vect, t_lag = t_lag_vect)),
   silent = T)}, simplify = FALSE)
   
   for (j in 1:length(id_models)){
-    try(id_bics[j] <- BIC(id_models[[j]]))
+    try(id_aiccs[j] <- AICc(id_models[[j]]))
     }
-  try(best_model <- id_models[[which.min(id_bics)]])
+  try(best_model <- id_models[[which.min(id_aiccs)]])
   try(gompertz_models[[i]] <- best_model)
-  try(gompertz_bics[i] <- id_bics[[which.min(id_bics)]], silent = TRUE)
+  try(gompertz_aiccs[i] <- id_aiccs[[which.min(id_aiccs)]], silent = TRUE)
 }))
 
 coefs <- matrix(nrow = length(unique(data$ID)), ncol = 4)
@@ -223,56 +221,54 @@ for (i in unique(data$ID)) {
 }
 
 # last is 281
-sum(gompertz_bics != Inf)
+sum(gompertz_aiccs != Inf)
 
-# x <- 278
-# mod <- gompertz_models[[x]]
-# plot_times <- seq(0, max(data$Time[which(data$ID == x)]), len = 200)
-# N_0<- coef(mod)["N_0"]
-# r_max <- coef(mod)["r_max"]
-# K <- coef(mod)["K"]
-# t_lag <- coef(mod)["t_lag"]
-# gomp_predicted <- N_0 + (K - N_0) * exp(-exp(r_max * exp(1) * (t_lag - plot_times)/((K - N_0) * log(10)) + 1))
+x <- 1
+mod <- gompertz_models[[x]]
+plot_times <- seq(0, max(data$Time[which(data$ID == x)]), len = 200)
+N_0<- coef(mod)["N_0"]
+r_max <- coef(mod)["r_max"]
+K <- coef(mod)["K"]
+t_lag <- coef(mod)["t_lag"]
+gomp_predicted <- N_0 + (K - N_0) * exp(-exp(r_max * exp(1) * (t_lag - plot_times)/((K - N_0) * log(10)) + 1))
 # quad_predicted <- predict.lm(quad_models[[x]], data[which(data$ID == x),])
-# cub_predicted <- predict.lm(cubic_models[[x]], data[which(data$ID == x),])
-# 
-# plot(data$Time[which(data$ID == x)], data$ln_PopBio[which(data$ID == x)])
-# lines(plot_times, gomp_predicted)
+# cub_predicted <- predict.lm(cuaicc_models[[x]], data[which(data$ID == x),])
+
+plot(data$Time[which(data$ID == x)], data$ln_PopBio[which(data$ID == x)])
+lines(plot_times, gomp_predicted)
 # lines(data$Time[which(data$ID == x)], log(quad_predicted))
 # lines(data$Time[which(data$ID == x)], log(cub_predicted))
 
-###### Compare BICs #########
-bic_compare <- matrix(nrow = 285, ncol = 4)
-bic_compare[,1] <- quad_bics
-bic_compare[,2] <- cubic_bics
-bic_compare[,3] <- logistic_bics
-bic_compare[,4] <- gompertz_bics
-which.min(bic_compare[1,])
+###### Compare AICcs #########
+aicc_compare <- matrix(nrow = 285, ncol = 4)
+aicc_compare[,1] <- quad_aiccs
+aicc_compare[,2] <- cubic_aiccs
+aicc_compare[,3] <- logistic_aiccs
+aicc_compare[,4] <- gompertz_aiccs
+which.min(aicc_compare[1,])
 
-bic_compare <- data.frame(quadratic = quad_bics, cubic = cubic_bics,
-                          logistic = logistic_bics, gompertz = gompertz_bics,
+aicc_compare <- data.frame(quadratic = quad_aiccs, cubic = cubic_aiccs,
+                          logistic = logistic_aiccs, gompertz = gompertz_aiccs,
                           best = NA)
 
-bic_compare[bic_compare == -Inf] <- Inf
-
 for (i in 1:285) {
-  bic_compare$best[i] <- which.min(bic_compare[i,1:4])
-  if (bic_compare[i,1] == bic_compare[i,2] & 
-      bic_compare[i,1] == bic_compare[i,3] &
-      bic_compare[i,1] == bic_compare[i,4]) {
-    bic_compare$best[i] <- 0
+  aicc_compare$best[i] <- which.min(aicc_compare[i,1:4])
+  if (aicc_compare[i,1] == aicc_compare[i,2] & 
+      aicc_compare[i,1] == aicc_compare[i,3] &
+      aicc_compare[i,1] == aicc_compare[i,4]) {
+    aicc_compare$best[i] <- 0
   }
 }
 
 
 
-tallies <- c(length(bic_compare$best[which(bic_compare$best == 1)]),
-             length(bic_compare$best[which(bic_compare$best == 2)]),
-             length(bic_compare$best[which(bic_compare$best == 3)]),
-             length(bic_compare$best[which(bic_compare$best == 4)]))
+tallies <- c(length(aicc_compare$best[which(aicc_compare$best == 1)]),
+             length(aicc_compare$best[which(aicc_compare$best == 2)]),
+             length(aicc_compare$best[which(aicc_compare$best == 3)]),
+             length(aicc_compare$best[which(aicc_compare$best == 4)]))
 
 tally_table <- data.frame(Model = c("Quadratic", "Cubic", "Logistic", "Gompertz"),
                           Tallies = tallies)
 
-write.csv(tally_table, "../results/bic_tallies.csv", quote = FALSE, row.names = F)
+write.csv(tally_table, "../results/aicc_tallies.csv", quote = FALSE, row.names = F)
 

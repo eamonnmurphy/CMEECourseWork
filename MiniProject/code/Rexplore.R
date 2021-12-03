@@ -1,5 +1,6 @@
 ####### Load in the data #####
 rm(list = ls())
+library(ggplot2)
 growth_data <- read.csv("../data/LogisticGrowthData.csv")
 meta_data <- read.csv("../data/LogisticGrowthMetaData.csv")
 
@@ -43,13 +44,17 @@ new_data <- subset(new_data, !(new_data$ID %in% to_remove))
 # Will standardize time in each experiment after removing replicates
 
 ##### Exploring replicated experiments ######
-library(ggplot2)
+rep_data <- subset(new_data, Citation == "Bernhardt, J.R., Sunday, J.M. and O’Connor, M.I., 2018. Metabolic theory and the temperature-size rule explain the temperature dependence of population carrying capacity. The American naturalist, 192(6), pp.687-697.")
 print(unique(new_data$ID[which(new_data$Citation == "Bernhardt, J.R., Sunday, J.M. and O’Connor, M.I., 2018. Metabolic theory and the temperature-size rule explain the temperature dependence of population carrying capacity. The American naturalist, 192(6), pp.687-697.")]))
+rep_data["ID_Rep"] <- paste(rep_data$ID, rep_data$Rep, sep = "_")
 
-qplot(Time, PopBio, data = subset(new_data, Citation == "Bernhardt, J.R., Sunday, J.M. and O’Connor, M.I., 2018. Metabolic theory and the temperature-size rule explain the temperature dependence of population carrying capacity. The American naturalist, 192(6), pp.687-697."),
-      colour = as.character(Rep)) + theme(legend.position = "none") + geom_smooth(se = F)
+p <- qplot(Time, log(PopBio), data = rep_data, colour = as.factor(ID_Rep)) + theme() + geom_smooth(se = F)
+png("../results/replicate_data.png")
+print(p)
+dev.off()
 
-model_reps <- lm(PopBio ~ poly(Time, 2) + as.character(Rep), data = subset(new_data, Citation == "Bernhardt, J.R., Sunday, J.M. and O’Connor, M.I., 2018. Metabolic theory and the temperature-size rule explain the temperature dependence of population carrying capacity. The American naturalist, 192(6), pp.687-697."))
+
+model_reps <- lm(log(PopBio) ~ poly(Time, 2) + as.character(Rep) + as.character(ID), data = rep_data)
 summary(model_reps)
 
 # No significant differences between replicates
@@ -94,6 +99,13 @@ for (j in 1:max(sample_size)) {
 
 hist(sample_size, breaks = 20)
 barplot(size_tallies, axisnames = T, )
+
+# Remove subsets with 6 or less data points
+for (i in 1:max(new_data$ID)) {
+  if (nrow(new_data[which(new_data$ID == i),]) < 7) {
+    new_data <- subset(new_data, ID != i)
+  }
+}
 
 ##### Write newly wrangled data to new csv #######
 write.csv(new_data, "../data/WrangledDataSet.csv", row.names = FALSE)
