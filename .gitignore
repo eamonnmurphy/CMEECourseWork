@@ -23,3 +23,7 @@ MiniProject/writeup/*.pdf
 main-words.sum
 MiniProject/writeup/main-words.sum
 .ipynb_checkpoints
+sim_results_*
+cluster_run.sh.o*
+cluster_run.sh.e*
+*.zip

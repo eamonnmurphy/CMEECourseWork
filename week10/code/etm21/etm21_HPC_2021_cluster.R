@@ -4,12 +4,11 @@ rm(list=ls()) # good practice
 graphics.off()
 source("etm21_HPC_2021_main.R")
 
-#iter <- as.numeric(Sys.getenv("PBS_ARRAY_INDEX"))
-iter <- 1
-
+# Read in job number and set as seed
+iter <- as.numeric(Sys.getenv("PBS_ARRAY_INDEX"))
 set.seed(iter)
 
-spec_rate <- 0.004643
+spec_rate <- 0.004643 # Unique rate generated using student ID
 
 if (iter %% 4 == 0) {
   size <- 500
@@ -23,6 +22,6 @@ if (iter %% 4 == 0) {
 
 filename <- paste("sim_results_", iter, ".Rda", sep = "")
 
-cluster_run(speciation_rate = spec_rate, size = size, wall_time = 1,
+cluster_run(speciation_rate = spec_rate, size = size, wall_time = 11.5*60,
             interval_rich = 1, interval_oct = size/10, burn_in_generations = 8 * size,
             output_file_name = filename)
