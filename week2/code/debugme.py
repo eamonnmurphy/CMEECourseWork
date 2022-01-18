@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Example buggy function'''
+"""Example buggy function"""
 
 def buggyfunc(x):
     y = x

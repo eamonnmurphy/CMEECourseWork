@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''How to read .txt files'''
+"""How to read .txt files"""
 
 ######################
 # FILE INPUT

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Use pickle to manipulate input files'''
+"""Use pickle to manipulate input files"""
 
 ########################
 # STORING OBJECTS

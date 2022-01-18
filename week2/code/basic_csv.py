@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-'''Examples of how to open and read csv files'''
+"""Examples of how to open and read csv files"""
 
 import csv
 

@@ -32,17 +32,19 @@ def is_an_oak(name):
 
 def main(argv):
     """Writes only the oak species to a new csv, from a file of tree species."""
-    f = open('../data/TestOaksData.csv','r')
-    g = open('../data/JustOaksData.csv','w')
-    taxa = csv.reader(f)
-    csvwrite = csv.writer(g)
-    for row in taxa:
-        print(row)
-        print ("The genus is: ") 
-        print(row[0] + '\n')
-        if is_an_oak(" ".join(row)):
-            print('FOUND AN OAK!\n')
-            csvwrite.writerow([row[0], row[1]])    
+    with open('../data/TestOaksData.csv','r') as f,\
+            open('../data/JustOaksData.csv','w') as g:
+        taxa = csv.reader(f)
+        csvwrite = csv.writer(g)
+        for row in taxa:
+            if row.lower() == "genus":
+                next(taxa, None)
+            print(row)
+            print ("The genus is: ") 
+            print(row[0] + '\n')
+            if is_an_oak(" ".join(row)):
+                print('FOUND AN OAK!\n')
+                csvwrite.writerow([row[0], row[1]])    
 
     return 0
     

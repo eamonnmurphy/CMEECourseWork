@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-'''Reads an input sequence file and aligns the sequences.
-Saves the alignment and score to a new bestseq.txt file in results directory'''
+"""Reads an input sequence file and aligns the sequences.
+Saves the alignment and score to a new bestseq.txt file in results directory"""
 
 # Read input .csv files
 import csv

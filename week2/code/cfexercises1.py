@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-'''Some mathematical operation functions, including factorials.'''
+"""Some mathematical operation functions, including factorials."""
 
 __author__ = 'Eamonn Murphy (eamonn.murphy21@imperial.ac.uk)'
 __version__ = '0.0.1'
@@ -11,19 +11,19 @@ import sys # module to interface our program with the operating system
 ## functions ##
 # Return square root x
 def foo_1(x):
-    ''' Return square root of x'''
+    """ Return square root of x"""
     return x ** 0.5
 
 # Return x and y if x > y, otherwise return y
 def foo_2(x, y):
-    ''' Return the greater of two numbers'''
+    """ Return the greater of two numbers"""
     if x > y:
         return x
     return y
 
 # Switch value of x, y, z so that z will be the largest etc.
 def foo_3(x,y,z):
-    ''' Rearrange some numbers based on their size'''
+    """ Rearrange some numbers based on their size"""
     if x > y:
         tmp = y
         y = x
@@ -36,7 +36,7 @@ def foo_3(x,y,z):
 
 # Return factorial of x
 def foo_4(x):
-    ''' Return factorial of x'''
+    """ Return factorial of x"""
     result = 1
     for i in range(1, x + 1):
         result = result * i
@@ -44,14 +44,14 @@ def foo_4(x):
 
 # a recursive function that calculates the factorial of x
 def foo_5(x):
-    ''' Return factorial of x through recursive function'''
+    """ Return factorial of x through recursive function"""
     if x == 1:
         return 1
     return x * foo_5(x -1)
 
 # Different method of calculating factorial of x
 def foo_6(x):
-    ''' Another method of calculating factorial of x'''
+    """ Another method of calculating factorial of x"""
     facto = 1
     while x >=1:
         facto = facto * x
@@ -59,7 +59,7 @@ def foo_6(x):
     return facto
 
 def main(argv):
-    ''' Main argument if imported'''
+    """ Main argument if imported"""
     print('foo_1(5): ', foo_1(5))
     print('foo_2(4, 5): ', foo_2(4, 5))
     print('foo_3(4, 2, 5): ', foo_3(4, 2, 5))
@@ -69,6 +69,6 @@ def main(argv):
     return 0
 
 if __name__ == '__main__':
-    '''Makes sure the 'main' function is called from command line'''
+    """Makes sure the 'main' function is called from command line"""
     status = main(sys.argv)
     sys.exit(status)

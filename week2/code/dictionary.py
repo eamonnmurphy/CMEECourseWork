@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-'''Populate a dictionary using an order key with species'''
+"""Populate a dictionary using an order key with species"""
 
 taxa = [('Myotis lucifugus', 'Chiroptera'),
         ('Gerbillus henleyi', 'Rodentia',),

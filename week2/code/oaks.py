@@ -1,5 +1,5 @@
 #!usr/bin/env python3
-'''Finds just those taxa that are oak trees from a list of species'''
+"""Finds just those taxa that are oak trees from a list of species"""
 
 taxa = ['Quercus robur',
         'Fraxinus excelsior',
@@ -10,7 +10,7 @@ taxa = ['Quercus robur',
 
 # check if input is an oak
 def is_an_oak(name):
-    '''Check if name is an oak'''
+    """Check if name is an oak"""
     return name.lower().startswith('quercus')
 
 ##Using for loops

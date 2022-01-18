@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-'''Some functions exemplifying the use of control statements.'''
+"""Some functions exemplifying the use of control statements."""
 #docstrings are considered part of the running code (normal comments are
 # stripped). Hence, you can access your docstrings at run time.
 
@@ -15,7 +15,7 @@ import doctest # Import doctest
 ## functions ##
 def even_or_odd(x=0): # if not specified, x should take value 0.
 
-    '''Find whether a number x is even or odd.
+    """Find whether a number x is even or odd.
     
     >>> even_or_odd(10)
     '10 is Even!'
@@ -31,7 +31,7 @@ def even_or_odd(x=0): # if not specified, x should take value 0.
     >>> even_or_odd(-2)
     '-2 is Even!'
 
-    '''
+    """
 
     # Define function to be tested
     if x % 2 == 0: #The conditional if
@@ -44,7 +44,7 @@ def main(argv):
     return 0
 
 if __name__ == '__main__':
-    '''Makes sure the 'main' function is called from command line'''
+    """Makes sure the 'main' function is called from command line"""
     status = main(sys.argv)
 
 doctest.testmod()

@@ -1,8 +1,8 @@
 #!/usr/bin/env python 3
-'''An example script and function to call.'''
+"""An example script and function to call."""
 
 def foo(x):
-    ''' Returns square of x'''
+    """ Returns square of x"""
     x *= x
     print(x)
 
