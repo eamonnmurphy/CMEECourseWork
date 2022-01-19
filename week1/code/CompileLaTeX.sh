@@ -1,9 +1,16 @@
 #!/bin/bash
-# Desc: Create pdf from LaTeX script and .bib file
-# Arguments: LaTeX script name
+# Author: Eamonn Murphy eamonn.murphy21@imperial.ac.uk
+# Script: ConcatenateTwoFies.sh
+# Desc: Concatenate two files together
+# Arguments: 3 -> Two input files and output destination
+
+# Check for an input argument
+if [ $# -eq 0 ]; then
+    echo "No input provided. Please provide the name of a LaTeX file."
+    exit
 
 # Process input if it includes .tex
-if [[ $1 == *".tex"* ]]; then
+elif [[ $1 == *".tex"* ]]; then
     pdflatex $1
     bibtex `basename -s .tex $1`
     pdflatex $1
@@ -31,3 +38,5 @@ rm *.aux
 rm *.log
 rm *.bbl
 rm *.blg
+
+exit

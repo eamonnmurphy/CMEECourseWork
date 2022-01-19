@@ -4,8 +4,7 @@
 !**/results/.gitkeep
 main
 requirements.txt
-**/**/Rplots.pdf
-week3/code/Florida.pdf
+*.pdf
 **/**/.Rhistory
 **/**/*.tif
 **/week5/data/*
@@ -18,8 +17,6 @@ week3/code/Florida.pdf
 *.synctex.gz
 *.bcf
 *.run.xml
-MiniProject/writeup/main.pdf
-MiniProject/writeup/*.pdf
 main-words.sum
 MiniProject/writeup/main-words.sum
 .ipynb_checkpoints
@@ -27,3 +24,4 @@ sim_results_*
 cluster_run.sh.o*
 cluster_run.sh.e*
 *.zip
+*.tif

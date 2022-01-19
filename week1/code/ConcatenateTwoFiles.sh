@@ -1,22 +1,26 @@
 #!/bin/bash
+# Author: Eamonn Murphy eamonn.murphy21@imperial.ac.uk
+# Script: ConcatenateTwoFies.sh
 # Desc: Concatenate two files together
-# Arguments: Two input files and output destination
+# Arguments: 3 -> Two input files and output destination
 
 # Return an error message if an input file doesn't exist
-if [ ! -f $1 ] || [ ! -f $2 ]; then
-    echo "Input file does not exist"
+if [ ! -f $1 ]; then
+    echo "Input file 1 does not exist"
     exit
-fi
+
+elif [ ! -f $2 ]; then
+    echo "Input file 2 does not exist"
+    exit
 
 # Return an error message if there is no input
-if [ $# -eq 0 ] || [ $# -eq 1 ]; then
+elif [ $# -eq 0 ] || [ $# -eq 1 ]; then
     echo "An input file is missing"
     exit
-fi
 
 # Return an error message if no output destination
-if [ $# -eq 2 ]; then
-    echo "No output destination"
+elif [ $# -eq 2 ]; then
+    echo "No output destination provided. Please add an output destination."
     exit
 fi
 
