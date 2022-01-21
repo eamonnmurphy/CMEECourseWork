@@ -6,7 +6,6 @@ main
 requirements.txt
 *.pdf
 **/**/.Rhistory
-**/**/*.tif
 **/week5/data/*
 **/**/__pycache__/*
 *.blg
@@ -25,3 +24,4 @@ cluster_run.sh.o*
 cluster_run.sh.e*
 *.zip
 *.tif
+*.tiff

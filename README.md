@@ -14,7 +14,7 @@ To clone this repository, copy and paste the code snippet below to your terminal
 * Python 3.8.10
 * R version 4.1.1
 * C - c17 standard; gcc version 9.3.0
-* $\\LaTeX$ - TeX Live 2019/Debian
+* LaTeX - TeX Live 2019/Debian
 ***
 ### Outline of Subdirectories
 * **week1 -** Bash and shell scripting

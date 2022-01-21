@@ -1,13 +1,14 @@
 ## Week One
 
-This repository contains the work done for week 1 of the CMEE Masters.
+This subdirectory contains work completed for week 1 of CMEE MSc Course. Topics include UNIX, bash, shell scripting, git and LaTeX. More detailed usage instructions are available in the main repository README.
 
-Language used: bash
+### Languages and dependencies
+* Bash 5.0.17
+* LaTeX - TeX Live 2019/Debian
+* imagemagick - for tiff2png.<span>sh
 
-All scripts are contained in **code** directory.
-
-Scripts:
-* boilerplate<span>.sh - Prints simple statement
+### Scripts
+* boilerplate<span>.sh - Prints a simple statement
 * tabtocsv<span>.sh - Converts tab seperated file to csv
 * variables.<span>sh - Print variable, then sum two variables
 * MyExampleScript<span>.sh - Print some simple messages
@@ -19,11 +20,8 @@ Scripts:
 * FirstExample.tex - LaTeX script to create example article
 * UnixPrac1.txt - Bash one line scripts to calculate values from fasta files
 
-Data:
+### Data
 * spawannxs.txt - list of species
-* Fasta files
+* Fasta files - genetic sequence data in plain text format
 * Temperature csv files
-
-Dependencies:
-* imagemagick - for tiff2png.<span>sh
 
