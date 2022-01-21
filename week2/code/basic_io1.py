@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
-"""How to read .txt files"""
+"""Explores methods for reading .txt files as input"""
+
+__author__ = "Eamonn Murphy (etm21@ic.ac.uk)"
+__version__ = "0.0.1"
 
 ######################
 # FILE INPUT

@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
-""" Shows examples of for loops."""
+"""Shows examples of for loops."""
+
+__author__ = "Eamonn Murphy (etm21@ic.ac.uk)"
+__version__ = "0.0.1"
+
 # FOR loops in Python
 for i in range(5):
     print(i)

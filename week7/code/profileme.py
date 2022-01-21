@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Example code to try out profiling"""
+"""Example code to try out profiling (locating slow sections of code)"""
 
 __author__ = 'Eamonn Murphy (eamonn.murphy21@imperial.ac.uk)'
 __version__ = '0.0.1'
@@ -12,14 +12,17 @@ def my_squares(iters):
     return out
 
 def my_join(iters, string):
-    """Join string iters times"""
+    """Join string to output string iters times"""
     out = ''
     for i in range(iters):
         out += string.join(", ")
     return out
 
 def run_my_funcs(x,y):
-    """Run the functions on x and y"""
+    """Run the functions on x and y
+    
+    x -> integer
+    y -> string"""
     print(x,y)
     my_squares(x)
     my_join(x,y)

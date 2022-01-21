@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 """This is a boilerplate script.
-It prints 'This is a boilerplate', and checks to ensure the function is called."""
+
+It prints 'This is a boilerplate', and checks to ensure 
+the function is called."""
 
 __appname__ = 'boilerplate'
 __author__ = 'Eamonn Murphy (eamonn.murphy21@imperial.ac.uk)'

@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
+"""Output information about some bird species from an input tuple.
 
-"""Output data from a tuple of tuples to seperate lines"""
+Reads a tuple of tuples provided with some information about birds,
+and outputs this information line by line for each species."""
+
+__author__ = "Eamonn Murphy (etm21@ic.ac.uk)"
+__version__ = "0.0.1"
 
 birds = (('Passerculus sandwichensis', 'Savannah sparrow', 18.7),
          ('Delichon urbica', 'House martin', 19),

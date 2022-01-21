@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
-"""Example buggy function"""
+""" Contains an example buggy function"""
+
+__author__ = "Eamonn Murphy (etm21@ic.ac.uk)"
+__version__ = "0.0.1"
+
 
 def buggyfunc(x):
+    """An example function to be debugged"""
     y = x
     for i in range(x):
         try:

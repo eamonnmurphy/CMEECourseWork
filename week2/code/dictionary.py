@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
+"""Populate a dictionary, mapping species to order.
 
-"""Populate a dictionary using an order key with species"""
+Map order names to sets of species, from an input list of taxa"""
+
+__author__ = "Eamonn Murphy (etm21@ic.ac.uk)"
+__version__ = "0.0.1"
 
 taxa = [('Myotis lucifugus', 'Chiroptera'),
         ('Gerbillus henleyi', 'Rodentia',),

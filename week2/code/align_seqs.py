@@ -2,6 +2,9 @@
 """Reads an input sequence file and aligns the sequences.
 Saves the alignment and score to a new bestseq.txt file in results directory"""
 
+__author__ = "Eamonn Murphy (etm21@ic.ac.uk)"
+__version__ = "0.0.1"
+
 # Read input .csv files
 import csv
 with open('../data/seq.csv','r') as f:
@@ -28,8 +31,9 @@ else:
 # A function that computes a score by returning the number of matches starting
 # from arbitrary startpoint (chosen by user)
 def calculate_score(s1, s2, l1, l2, startpoint):
-    """ Calculate the score 
-    """
+    """Calculate the alignment score for each possible alignment
+    
+    Score is equal to the number of base matches within each alignment"""
     matched = "" # to hold string displaying alignements
     score = 0
     for i in range(l2):

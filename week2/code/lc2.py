@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
+"""Create tuples based on rainfall data with comprehensions and for loops.
 
-"""Create tuples based on rainfall data with comprehensions and for loops"""
+From an example dataset of rainfall by month for a year, creates tuples
+recording months where rainfall was above or below a certain level."""
+
+__author__ = "Eamonn Murphy (etm21@ic.ac.uk)"
+__version__ = "0.0.1"
 
 # Average UK Rainfall (mm) for 1910 by month
 # http://www.metoffice.gov.uk/climate/uk/datasets
