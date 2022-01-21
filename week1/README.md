@@ -5,7 +5,7 @@ This subdirectory contains work completed for week 1 of CMEE MSc Course. Topics 
 ### Languages and dependencies
 * Bash 5.0.17
 * LaTeX - TeX Live 2019/Debian
-* imagemagick - for tiff2png.<span>sh
+* [imagemagick](https://imagemagick.org/script/download.php) - for tiff2png.<span>sh
 
 ### Scripts
 * boilerplate<span>.sh - Prints a simple statement

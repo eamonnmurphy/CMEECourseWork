@@ -1,0 +1,2 @@
+## Spatial Analyses and GIS
+This subdirectory contains practicals and worked examples from the spatial analyses and GIS week, taught by David Orme. The main language used is R. The full suite of Rgis packages, including rgdal, raster, SpatialPack etc. is required to run these scripts. Installation of these can be difficult with recursive dependencies, and usually proceeds better if you ensure all other R packages are up to date first. Further usage instructions can be found in the main README.

@@ -1,0 +1,2 @@
+## Statistics in R
+This subdirectory contains worked examples for the Statistics in R week during CMEE MSc. The language used is R. Please refer to the main directory README for more detailed usage instructions.

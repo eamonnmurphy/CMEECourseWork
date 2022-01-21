@@ -1,0 +1,2 @@
+## Population Genetics
+This subdirectory contains scripts written to gain understanding of the basics of population genetics. The main langugage used is R. Please refer to the README in the main directory for more detailed usage instructions.

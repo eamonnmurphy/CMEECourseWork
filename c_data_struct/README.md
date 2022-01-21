@@ -1,0 +1,2 @@
+## Biological Data Structures and C
+This subdirectory contains inclass programs and exercises completed during the Biological Data Structures and C week. The c17 standard was used, and the compiler was gcc version 9.3.0. Programs should be able to run either on their own or with user provided arguments. The structure of this directory differs slightly from the rest: the code is split into exercises and inclass subdirectories for clarity. Please refer to the main repo README for further info.

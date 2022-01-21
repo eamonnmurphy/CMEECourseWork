@@ -1,0 +1,2 @@
+## High Performance Computing
+This subdirectory includes the work completed for the HPC week in the CMEE MSc course, taught by James Rosindell. Scripts are written in bash (for the UNIX HPC cluster) and R version 4.1.1. The main script files can be found in code/etm21. The best method for testing the functions is to use the source command in an R environment. Topics explored include the ecological neutral model and fractals. Please refer to the main repository README for further details.
