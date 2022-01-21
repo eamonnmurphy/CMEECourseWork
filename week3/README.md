@@ -41,12 +41,12 @@ This subdirectory differs slightly from the normal structure, in that there is a
 * try.R
 
 #### Biological Computing in R practical scripts
-* TreeHeight.R
-* Ricker.R
-* Vectorize2.R
-* Florida.R
-* Florida.tex
-* Florida.bib
+* TreeHeight.R - calculate a tree's height based on angle and distance
+* Ricker.R - pop model to model recruitment of stock in fisheries
+* Vectorize2.R - attempt to vectorise the stochastic Ricker model
+* Florida.R - calculate correlation between year and temp in Florida
+* Florida.tex - LaTeX writeup of the above results
+* Florida.bib - references for LaTex writeup
 
 #### Data Management and Visualisation in-class scripts
 * DataWrang.R
@@ -55,10 +55,10 @@ This subdirectory differs slightly from the normal structure, in that there is a
 * plotLin.R
 
 #### Practical scripts for Data Management and Visualisation
-* DataWrangTidy.R
-* PP_Dists.R
-* PP_Regress.R
-* GPDD_Data.R
+* DataWrangTidy.R - data wrangling using the tidyverse
+* PP_Dists.R - plots mass distributions for a dataset of predator prey interactions
+* PP_Regress.R - as above, but calculates a regression model and best fit
+* GPDD_Data.R - create a world map using maps package
 
 #### Groupwork scripts
 * Floridabiblio.bib - bibliography file for LaTeX document
@@ -70,11 +70,11 @@ This subdirectory differs slightly from the normal structure, in that there is a
 * run_get_TreeHeight.sh - runs and test R and python scripts
 ***
 ### Data
-* EcolArchives-E089-51-D1.csv
-* KeyWestAnnualMeanTemperature.Rdata
-* PoundHillMetaData.csv
-* trees.csv
-* GPDDFiltered.Rdata
-* PoundHillData.csv
-* Results.txt
+* EcolArchives-E089-51-D1.csv - predator prey interactions dataset
+* KeyWestAnnualMeanTemperature.Rdata - temp data for Key West from 1900-2000
+* PoundHillMetaData.csv - information about the PoundHill dataset
+* trees.csv - measurements from which tree height can be calculated
+* GPDDFiltered.Rdata - Rdata file containing geographical data
+* PoundHillData.csv - dataset of cultivation treatments
+* Results.txt - example results to plot
 
