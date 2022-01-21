@@ -22,11 +22,16 @@ require(ggplot2)
 require(broom)
 
 rm(list = ls())
+set.seed(1)
 
 # Read data and look at feeding interaction data
 MyDF <- read.csv("../data/EcolArchives-E089-51-D1.csv")
+
+# Convert units
 MyDF$Prey.mass[which(MyDF$Prey.mass.unit == "mg")] <- 
   MyDF$Prey.mass[which(MyDF$Prey.mass.unit == "mg")] / 1000
+
+# Create subset dataframe
 altered_df <- MyDF %>% subset(select = 
                                 c(Predator.mass, Prey.mass, 
                                   Type.of.feeding.interaction, 
@@ -48,7 +53,7 @@ p <- ggplot(altered_df,
         panel.grid.minor = element_line(colour = "grey", size = 0.1),
         aspect.ratio = 1/3, strip.text = element_text(size = 5.5)) +
   labs(x="Prey Mass in grams", y="Predator Mass in grams") + 
-  scale_y_continuous(trans = "log10") + scale_x_continuous(trans = "log10") +
+  scale_y_continuous(trans = "log10") + scale_x_continuous(trans = "log10") + # log the scales
   guides(colour = guide_legend(nrow = 1, byrow = TRUE))
 
 # Save to pdf
@@ -57,46 +62,43 @@ print(p)
 dev.off()
 
 # Calculate regression results
-regr_df <- data.frame(matrix(ncol = 5, nrow = 0))
-names <- c("slope", "intercept", "r_squared", "F_stat", "p_value")
+# Initialise dataframe to store results
+regr_df <- data.frame(matrix(ncol = 7, nrow = 0))
+names <- c("Feeding interaction", "Lifestage", "slope", "intercept", "r_squared", "F_stat", "p_value")
 colnames(regr_df) <- names
 rows <- c()
 
+# Loop through each feeding interaction
 for (type in unique(altered_df$Type.of.feeding.interaction)) {
-  # browser()
+  # Loop through each lifestage, by feeding interaction
   for (stage in unique(altered_df$Predator.lifestage)) {
+      # Create subset df
       quick_df <- altered_df %>% filter(
         Predator.lifestage == stage, Type.of.feeding.interaction == type
       )
-      if (all(is.na(quick_df$Predator.mass))) {
+      
+      if (all(is.na(quick_df$Predator.mass))) { # Check if there are values of mass
         next
       }
-      else if (all(is.na(quick_df$Predator.mass))) {
-        next
-      }
-      # else if (nrow(quick_df) <= 2) {
-      #   next
-      # }
-      else {
-        name <- paste(type, stage, sep = ".")
-        append(rows, name)
-        new_lm <- lm(Predator.mass ~ Prey.mass, data = quick_df)
+      else { # Proceed to create model
+        new_lm <- lm(Predator.mass ~ Prey.mass, data = quick_df) # Create linear model
+        
+        # Generate various summary statistics
         summary <- summary(new_lm)
-        # print(summary)
-        # print(summary$fstatistic)
         tidied <- tidy(new_lm)
-        # print(tidied)
         glanced <- glance(new_lm)
-        # print(glanced)
-        try(regr_df[nrow(regr_df)+1,] <- c(
+        
+        # Put the summary statistics in the results dataframe
+        # Use try as some combinations have too few individuals to generate some
+        # of the statistics
+        try(regr_df[nrow(regr_df)+1,] <- c(type, stage,
            tidied[2,2], tidied[1,2], glanced[1,1], summary$fstatistic[1],
            pf(summary$fstatistic[1], summary$fstatistic[2], summary$fstatistic[3],
               lower.tail = FALSE)
          ))
-        row.names(regr_df)[nrow(regr_df)] <- name
       }
   }
 }
 
-write.csv(regr_df, "../results/PP_Regress_Results.csv")
+write.csv(regr_df, "../results/PP_Regress_Results.csv", row.names = FALSE)
 

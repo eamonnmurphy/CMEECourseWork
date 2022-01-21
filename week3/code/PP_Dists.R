@@ -16,15 +16,21 @@ rm(list = ls())
 
 # Read data and look at feeding interaction data
 MyDF <- read.csv("../data/EcolArchives-E089-51-D1.csv")
+
+# Convert units for prey where unit is listed as mg
 MyDF$Prey.mass[which(MyDF$Prey.mass.unit == "mg")] <- 
   MyDF$Prey.mass[which(MyDF$Prey.mass.unit == "mg")] / 1000
+
+# Create subsetted dataframe with necessary info
 altered_df <- MyDF %>% subset(select = c(Predator.mass, Prey.mass, Type.of.feeding.interaction))
 altered_df$Size.ratio <- (altered_df$Predator.mass/altered_df$Prey.mass)
 table(altered_df$Type.of.feeding.interaction)
 
 # Create 5 subplots for predator mass by feeding interaction type
 pdf("../results/Pred_Subplots.pdf")
-par(mfrow = c(3,2))
+par(mfrow = c(3,2)) # Create 2x3 plotting area
+
+# Loop through each feeding interaction and plot the masses
 for (type in unique(altered_df$Type.of.feeding.interaction)) {
   plot(density(subset(log(altered_df$Predator.mass),
                       altered_df$Type.of.feeding.interaction == type)),
@@ -34,7 +40,9 @@ dev.off()
 
 # Create subplots for prey mass by feeding interaction type
 pdf("../results/Prey_Subplots.pdf")
-par(mfrow = c(3,2))
+par(mfrow = c(3,2)) # Create 2x3 plotting area
+
+# Loop through each feeding interaction and plot the masses
 for (type in unique(altered_df$Type.of.feeding.interaction)) {
   plot(density(subset(log(altered_df$Prey.mass),
                       altered_df$Type.of.feeding.interaction == type)),
@@ -44,7 +52,9 @@ dev.off()
 
 # Create subplots for size ratios
 pdf("../results/SizeRatio_Subplots.pdf")
-par(mfrow = c(3,2))
+par(mfrow = c(3,2)) # Create 2x3 plotting area
+
+# Loop through each feeding interaction and plot the masses
 for (type in unique(altered_df$Type.of.feeding.interaction)) {
   plot(density(subset((log(altered_df$Size.ratio)),
                       altered_df$Type.of.feeding.interaction == type)),
@@ -63,11 +73,13 @@ columns <- c("Log_mean_predator_mass_g" ,
              "Log_mean_prey_mass_g" ,
              "Log_predator:prey_size_ratio")
 
+# Initiatlise data frame
 output_df <- data.frame(matrix(nrow = 0,
                                ncol = length(columns)))
 
 colnames(output_df) <- columns
 
+# Loop through each type and calculate mean mass and ratio for each
 for (type in unique(altered_df$Type.of.feeding.interaction)) {
   output_df[type,1] <- mean(subset((log(altered_df$Predator.mass)),
                                    altered_df$Type.of.feeding.interaction == type))

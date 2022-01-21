@@ -46,11 +46,13 @@ stochrickvect <- function(p0 = runif(1000, .5, 1.5), r = 1.2, K = 1, sigma = 0.2
   N <- matrix(NA, numyears, length(p0))  #initialize empty matrix
   
   N[1, ] <- p0
-
+  
+  # Pregenerate the random fluctuations to be added to every year except the first
+  # Hence it is numyears - 1
   randoms <- matrix(rnorm(length(p0) * (numyears - 1), 0, sigma), numyears - 1, length(p0))
   
-  for (yr in 2:numyears){ #for each pop, loop through the years
-      
+  for (yr in 2:numyears){ # Loop through the years
+      # Use vectorised approach to loop through populations with [,]
       N[yr, ] <- N[yr-1, ] * exp(r * (1 - N[yr - 1, ] / K) + randoms[yr - 1, ]) # add one fluctuation from normal distribution
       
   }

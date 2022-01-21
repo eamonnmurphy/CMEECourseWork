@@ -39,6 +39,8 @@ head(TempData)
 require(tidyr)
 require(dplyr)
 
+
+# Use pivot longer tidyverse function to convert to long format
 MyWrangledData <- TempData %>% pivot_longer(cols = -c("Cultivation", "Block", "Plot", "Quadrat"), names_to = "Species", values_to = "Count")
 
 MyWrangledData$Cultivation <- as.factor(MyWrangledData$Cultivation)

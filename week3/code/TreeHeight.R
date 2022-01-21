@@ -18,12 +18,9 @@ TreesData <- read.csv('../data/trees.csv', stringsAsFactors=FALSE)
 TreeHeight <- function(degrees, distance){
     radians <- degrees * pi / 180
     height <- distance * tan(radians)
-    #print(paste('Tree height is:', height))
+    print(paste('Tree height is:', height))
     return(height)
 }
-
-# Example call
-TreeHeight(37, 40)
 
 # Create empty dataframe
 TreeHts <- data.frame(Species=numeric(), Distance.m=numeric(),
