@@ -1,6 +1,8 @@
 ## Week Three
 
 This subdirectory contains work completed for week 3 of the CMEE MSc Course, Biological Computing in R. Topics include data wrangling and visualisation, vectorisation, debugging and R basics. More detailed usage instructions are available in the main repository README. Language and package versions are listed below, where available.
+
+This subdirectory differs slightly from the normal structure, in that there is also a writeup directory. This contains pdf documents for the correlation analysis on the temperature data for Florida, for both the individual analysis and the groupwork autocorrelation analysis. Source code LaTeX files are available in the code directory.
 ***
 ### Languages and Packages
 #### Languages
@@ -44,6 +46,7 @@ This subdirectory contains work completed for week 3 of the CMEE MSc Course, Bio
 * Vectorize2.R
 * Florida.R
 * Florida.tex
+* Florida.bib
 
 #### Data Management and Visualisation in-class scripts
 * DataWrang.R

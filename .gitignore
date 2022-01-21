@@ -5,6 +5,7 @@
 main
 requirements.txt
 *.pdf
+!week3/writeup/*.pdf
 **/**/.Rhistory
 **/week5/data/*
 **/**/__pycache__/*

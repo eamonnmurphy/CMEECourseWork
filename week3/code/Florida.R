@@ -6,6 +6,7 @@
 library(ggplot2)
 rm(list = ls())
 load("../data/KeyWestAnnualMeanTemperature.RData")
+set.seed(1)
 
 # Inspect data
 class(ats)
@@ -31,15 +32,15 @@ num <- sum(cor_vec > correlation)
 p_value <- num/10000
 
 # Create images for Latex file
-p <- ggplot(data = ats, aes(Year, Temp)) + geom_point() +
-  labs(y = "Temperature (C)") +
-  geom_smooth(method = "lm", se = TRUE, fullrange = TRUE)
-
 png("../results/temp_year_scatter.png")
-print(p)
+plot(x = ats$Year, y = ats$Temp, xlim = c(1900,2000), ylim = c(23.5, 26.5),
+     xlab = "Year", ylab = "Temperature (Degrees Celcius)", pch = 16,
+     col = "blue", cex.axis = 1.2, cex.lab = 1.6) + 
+  abline(lm(ats$Temp ~ ats$Year), col = "black", lwd = 2)
 dev.off()
 
 
 png("../results/coeff_distro.png")
-hist(cor_vec, main = NULL, xlab = "Correlation coefficients")
+hist(cor_vec, main = NULL, xlab = "Correlation coefficients", col = "lightblue",
+     cex.axis = 1.2, cex.lab = 1.6, ylim = c(0,2000))
 dev.off()
