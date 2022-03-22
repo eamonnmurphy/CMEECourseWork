@@ -1,0 +1,186 @@
+---
+title: "Practical session 2"
+author: "Sandra Alvarez-Carretero"
+date: "2022/03/01"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Setting your working environment
+
+First, we will clean and set our working environment. It is important that, whenever you start working on a project, you clean your working environment to avoid issues with objects generated in previous sessions/projects. If you want to do this using the command line, you can do the following:
+
+```{r}
+# Clean environment 
+rm( list = ls( ) )
+
+# Set working directory with package `rstudioapi`:
+#
+# 1. Load the package `rstudioapi`. If you do not have 
+#    it installed, then uncomment and run the
+#    command below
+# install.packages( "rstudioapi" )
+library( rstudioapi ) 
+# 2. Get the path to current open R script
+path_to_file <- getActiveDocumentContext()$path
+wd           <- paste( dirname( path_to_file ), "/", sep = "" )
+setwd( wd )
+```
+
+Now, any data that you generate when you run the commands in this R script will be saved in the directory you have defined above (unless you specify otherwise when saving the data!). 
+
+---
+
+# Combining the likelihood and the prior
+
+## EXERCISE 1
+
+_**SCENARIO**_<br>
+We have started our field work and we are studying a specific tree species. We want to take a sample from the different trees planted in the area, so we collecte one leave per tree and measure the width (cm). The results are the following:
+
+```{r} 
+# Save collected measurements as data, D
+D <- c( 0.5, 0.8, 0.9, 1.0, 1.15, 0.9, 0.8, 0.9, 1.7, 2, 1.1 )
+# Count number of observations in D
+n <- length( D )
+# Estimate variance and sd 
+sd( D ) # 0.43
+# Estimate mean 
+mean( D ) # 1.07
+# Plot data (use `breaks` so we can better visualise 
+# our data)
+hist( D, breaks=6 )
+```
+By looking at our data, we might consider that the best probability distribution that we can use to model my likelihood is the normal distribution. This function would help us understand the probability of observing my data, $D$, given the values that we randomly choose for our parameters of interest. For this example, we will assume the estimates we get from our collected data so, if we put those in a formula:
+
+$lnL(D|\theta)=lnL(D|\mu,sd)=lnL(D\mu=1.07, sd=0.43)$
+```{r} 
+# L_norm <- function( mu = 1.07, sd = 0.43, D ) {
+#L_norm <- function( mu, sd, D ) {
+L_norm <- function( D, mu, sd ) {
+  # Define the mean and the standard deviation, which are passed 
+  # to one argument as a numeric vector of length 2
+  mu    <- mu
+  sigma <- sd
+  # Define log-normal distribution, a sum of all the densities 
+  # calculated for each data point that we have in our dataset, D
+  L   <- sum( dnorm( x = D, mean = mu, sd = sigma ) )
+  # Return likelihood 
+  return( L )
+}
+```
+
+Even though we know the likelihood, we have not yet incorporated any information about our parameters of interest before: we had not used any prior distribution. 
+
+After contacting some botanists working in the field work we have collected our data, we know that for the past 10 years they have seen that the average (in cm) for the leaves is around $0.85$. With this information, we would be able to build a prior.
+
+
+<br><br>
+_**QUESTION**_<br><br>
+**1. Which probability distribution do you think would be more sensible to use as a prior for $\mu$, our parameter of interest. In other words, what probability distribution would you use to represent the prior on the mean width of the leaves?**
+<br><br>   
+
+><font size="2.9">
+_**ANSWER**_
+</font>
+
+A normal distribution given that our collaborators have given us some data about the mean width of the leaves and that our likelihood is also a normal distribution.
+
+_**QUESTION**_<br><br>
+**2. Which would be the values for $\mu$ and the standard deviation that you would use to define your prior? What do you base this selection?**
+<br><br>   
+
+><font size="2.9">
+_**ANSWER**_
+</font>
+
+There is not a unique answer. For instance, we could assume that $parameter\pm 2\times sd > 0$ given that our prior distribution will be a normal distribution. Therefore:
+
+$\mu_{leave} - 2\times sd{leave} > 0$
+$\frac{\mu_{leave}}{2} > sd{levae}$
+$\frac{0.85}{2} > sd{leave}$
+$sd{leave} = 0.425$
+
+Therefore, $\mu_{leave} \~ N(0.85,0.425^2)$
+
+---
+
+# Posterior, unnormalised posterior, and marginal likelihood 
+
+**How would you analytically compute the posterior distribution, i.e., $P(\theta|D)=P(\mu|D)$?**
+<br><br>   
+
+In the previous section, we have seen how we can fit normal distributions for the likelihood and the prior (i.e., the numerator). Nevertheless, we have not yet talked about the denominator, the marginal likelihood:
+
+$posterior = \frac{prior\times likelihood}{marginal\_likelihood}$
+
+Normally, we would want to avoid computing the marginal likelihood because it tends to be overly complicated. In this case, however, the marginal likelihood is not too complicated and can is computationally tractable. We defined the likelihood function above, so now we can define the prior:
+
+
+```{r}
+# Define the prior as a normal distribution 
+#prior_fun <- function( mu_l = 0.85, sd_l = 0.425, D ) {
+#prior_fun <- function( mu_l, sd_l, D ) {
+prior_fun <- function( D, mu_l, sd_l ) {
+  # Define the mean and the standard deviation, which are passed 
+  # to one argument as a numeric vector of length 2
+  mu_2    <- mu_l
+  sigma_2 <- sd_l
+  # Define log-normal distribution, a sum of all the densities 
+  # calculated for each data point that we have in our dataset, D
+  L   <- sum( dnorm( x = D, mean = mu_2, sd = sigma_2 ) )
+  # Return likelihood 
+  return( L )
+}
+```
+
+The next step is to compute the numerator, what we call the **unnormalised posterior** (more on this when we learn about MCMC!). The only thing we need to do is multiplicate the prior by the likelihood. We can do this because we have already defined the corresponding functions:
+
+```{r}
+# Defined unnormalised posterior
+# unnorm_post <- function( mu = 1.07, sd = 0.43, mu_l = 0.85, sd_l= 0.425, D ){
+#unnorm_post <- function( mu, sd, mu_l, sd_l, D ){
+unnorm_post <- function( D, mu, sd, mu_l, sd_l ){
+  # posterior ~ prior x lnL
+  return( prior_fun( mu_l = mu_l, sd_l = sd_l, D = D )*L_norm( mu = mu, sd = sd, D = D ) )
+}
+```
+
+
+So far, we have defined three functions for three probability distributions: the prior, the likelihood, and the unnormalised posterior. So now... how de we manage to compute **the posterior**? Well, we will need to incorporate the marginal likelihood, which basically is a constant that needs to integrate to 1! 
+
+Remember that this term is the probability of the data, of everything we can observe. In this way, it is an integral over the joint probability: 
+
+$P(marginal\_likelihood)=\int{prior\times lnL}$
+
+To calculate this integral, we could use the function `integrate`, which will target the unnormalised posterior:
+
+```{r}
+# NOTE: `f` should be an R function taking a numeric first argument and returning a numeric vector of the same length. Vectorize will make `f` a such function that returns the same length output as input.
+# Source: https://stackoverflow.com/questions/43818574/error-in-integrate-evaluation-of-function-gave-a-result-of-wrong-length
+integrate( f=Vectorize(unnorm_post), lower=0, upper=Inf, abs.tol = 0, 
+           mu = 1.07, sd = 0.43, mu_l = 0.85, sd_l= 0.425 )
+
+# 0.6171196 with absolute error < 1.5e-05
+# The marginal likelihood, this constant, will be: 
+C  <- 1 / 0.6171196
+```
+If now I want to compute my normalised posterior distribution:
+
+```{r}
+# posterior = C * prior * L = C * unnormalised_posterior
+C  <- 1 / 0.6171196
+post_fun <- function( D, C, mu, sd, mu_l, sd_l ){
+  return( C * unnorm_post( D, mu, sd, mu_l, sd_l ) )
+}
+
+# Compute posterior
+post_fun( D = D, C = C, mu = 1.07, sd = 0.43, mu_l = 0.85, sd_l= 0.425 ) # 97.64066
+
+```
+

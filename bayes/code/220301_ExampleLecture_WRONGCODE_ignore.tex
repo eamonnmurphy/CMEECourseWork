@@ -1,0 +1,376 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\title{Practical session 2}
+\author{Sandra Alvarez-Carretero}
+\date{2022/03/01}
+
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Practical session 2},
+  pdfauthor={Sandra Alvarez-Carretero},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\begin{document}
+\maketitle
+
+\hypertarget{setting-your-working-environment}{%
+\section{Setting your working
+environment}\label{setting-your-working-environment}}
+
+First, we will clean and set our working environment. It is important
+that, whenever you start working on a project, you clean your working
+environment to avoid issues with objects generated in previous
+sessions/projects. If you want to do this using the command line, you
+can do the following:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Clean environment }
+\FunctionTok{rm}\NormalTok{( }\AttributeTok{list =} \FunctionTok{ls}\NormalTok{( ) )}
+
+\CommentTok{\# Set working directory with package \textasciigrave{}rstudioapi\textasciigrave{}:}
+\CommentTok{\#}
+\CommentTok{\# 1. Load the package \textasciigrave{}rstudioapi\textasciigrave{}. If you do not have }
+\CommentTok{\#    it installed, then uncomment and run the}
+\CommentTok{\#    command below}
+\CommentTok{\# install.packages( "rstudioapi" )}
+\FunctionTok{library}\NormalTok{( rstudioapi ) }
+\CommentTok{\# 2. Get the path to current open R script}
+\NormalTok{path\_to\_file }\OtherTok{\textless{}{-}} \FunctionTok{getActiveDocumentContext}\NormalTok{()}\SpecialCharTok{$}\NormalTok{path}
+\NormalTok{wd           }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{( }\FunctionTok{dirname}\NormalTok{( path\_to\_file ), }\StringTok{"/"}\NormalTok{, }\AttributeTok{sep =} \StringTok{""}\NormalTok{ )}
+\FunctionTok{setwd}\NormalTok{( wd )}
+\end{Highlighting}
+\end{Shaded}
+
+Now, any data that you generate when you run the commands in this R
+script will be saved in the directory you have defined above (unless you
+specify otherwise when saving the data!).
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{combining-the-likelihood-and-the-prior}{%
+\section{Combining the likelihood and the
+prior}\label{combining-the-likelihood-and-the-prior}}
+
+\hypertarget{exercise-1}{%
+\subsection{EXERCISE 1}\label{exercise-1}}
+
+\emph{\textbf{SCENARIO}} We have started our field work and we are
+studying a specific tree species. We want to take a sample from the
+different trees planted in the area, so we collecte one leave per tree
+and measure the width (cm). The results are the following:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Save collected measurements as data, D}
+\NormalTok{D }\OtherTok{\textless{}{-}} \FunctionTok{c}\NormalTok{( }\FloatTok{0.5}\NormalTok{, }\FloatTok{0.8}\NormalTok{, }\FloatTok{0.9}\NormalTok{, }\FloatTok{1.0}\NormalTok{, }\FloatTok{1.15}\NormalTok{, }\FloatTok{0.9}\NormalTok{, }\FloatTok{0.8}\NormalTok{, }\FloatTok{0.9}\NormalTok{, }\FloatTok{1.7}\NormalTok{, }\DecValTok{2}\NormalTok{, }\FloatTok{1.1}\NormalTok{ )}
+\CommentTok{\# Count number of observations in D}
+\NormalTok{n }\OtherTok{\textless{}{-}} \FunctionTok{length}\NormalTok{( D )}
+\CommentTok{\# Estimate variance and sd }
+\FunctionTok{sd}\NormalTok{( D ) }\CommentTok{\# 0.43}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.4279443
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Estimate mean }
+\FunctionTok{mean}\NormalTok{( D ) }\CommentTok{\# 1.07}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.068182
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot data (use \textasciigrave{}breaks\textasciigrave{} so we can better visualise }
+\CommentTok{\# our data)}
+\FunctionTok{hist}\NormalTok{( D, }\AttributeTok{breaks=}\DecValTok{6}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220301_ExampleLecture_WRONGCODE_ignore_files/figure-latex/unnamed-chunk-2-1.pdf}
+By looking at our data, we might consider that the best probability
+distribution that we can use to model my likelihood is the normal
+distribution. This function would help us understand the probability of
+observing my data, \(D\), given the values that we randomly choose for
+our parameters of interest. For this example, we will assume the
+estimates we get from our collected data so, if we put those in a
+formula:
+
+\(lnL(D|\theta)=lnL(D|\mu,sd)=lnL(D\mu=1.07, sd=0.43)\)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# L\_norm \textless{}{-} function( mu = 1.07, sd = 0.43, D ) \{}
+\CommentTok{\#L\_norm \textless{}{-} function( mu, sd, D ) \{}
+\NormalTok{L\_norm }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{( D, mu, sd ) \{}
+  \CommentTok{\# Define the mean and the standard deviation, which are passed }
+  \CommentTok{\# to one argument as a numeric vector of length 2}
+\NormalTok{  mu    }\OtherTok{\textless{}{-}}\NormalTok{ mu}
+\NormalTok{  sigma }\OtherTok{\textless{}{-}}\NormalTok{ sd}
+  \CommentTok{\# Define log{-}normal distribution, a sum of all the densities }
+  \CommentTok{\# calculated for each data point that we have in our dataset, D}
+\NormalTok{  L   }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{( }\FunctionTok{dnorm}\NormalTok{( }\AttributeTok{x =}\NormalTok{ D, }\AttributeTok{mean =}\NormalTok{ mu, }\AttributeTok{sd =}\NormalTok{ sigma ) )}
+  \CommentTok{\# Return likelihood }
+  \FunctionTok{return}\NormalTok{( L )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Even though we know the likelihood, we have not yet incorporated any
+information about our parameters of interest before: we had not used any
+prior distribution.
+
+After contacting some botanists working in the field work we have
+collected our data, we know that for the past 10 years they have seen
+that the average (in cm) for the leaves is around \(0.85\). With this
+information, we would be able to build a prior.
+
+\emph{\textbf{QUESTION}} \textbf{1. Which probability distribution do
+you think would be more sensible to use as a prior for \(\mu\), our
+parameter of interest. In other words, what probability distribution
+would you use to represent the prior on the mean width of the leaves?}
+
+\begin{quote}
+\emph{\textbf{ANSWER}}
+\end{quote}
+
+A normal distribution given that our collaborators have given us some
+data about the mean width of the leaves and that our likelihood is also
+a normal distribution.
+
+\emph{\textbf{QUESTION}} \textbf{2. Which would be the values for
+\(\mu\) and the standard deviation that you would use to define your
+prior? What do you base this selection?}
+
+\begin{quote}
+\emph{\textbf{ANSWER}}
+\end{quote}
+
+There is not a unique answer. For instance, we could assume that
+\(parameter\pm 2\times sd > 0\) given that our prior distribution will
+be a normal distribution. Therefore:
+
+\(\mu_{leave} - 2\times sd{leave} > 0\)
+\(\frac{\mu_{leave}}{2} > sd{levae}\) \(\frac{0.85}{2} > sd{leave}\)
+\(sd{leave} = 0.425\)
+
+Therefore, \(\mu_{leave} \~ N(0.85,0.425^2)\)
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{posterior-unnormalised-posterior-and-marginal-likelihood}{%
+\section{Posterior, unnormalised posterior, and marginal
+likelihood}\label{posterior-unnormalised-posterior-and-marginal-likelihood}}
+
+\textbf{How would you analytically compute the posterior distribution,
+i.e., \(P(\theta|D)=P(\mu|D)\)?}
+
+In the previous section, we have seen how we can fit normal
+distributions for the likelihood and the prior (i.e., the numerator).
+Nevertheless, we have not yet talked about the denominator, the marginal
+likelihood:
+
+\(posterior = \frac{prior\times likelihood}{marginal\_likelihood}\)
+
+Normally, we would want to avoid computing the marginal likelihood
+because it tends to be overly complicated. In this case, however, the
+marginal likelihood is not too complicated and can is computationally
+tractable. We defined the likelihood function above, so now we can
+define the prior:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Define the prior as a normal distribution }
+\CommentTok{\#prior\_fun \textless{}{-} function( mu\_l = 0.85, sd\_l = 0.425, D ) \{}
+\CommentTok{\#prior\_fun \textless{}{-} function( mu\_l, sd\_l, D ) \{}
+\NormalTok{prior\_fun }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{( D, mu\_l, sd\_l ) \{}
+  \CommentTok{\# Define the mean and the standard deviation, which are passed }
+  \CommentTok{\# to one argument as a numeric vector of length 2}
+\NormalTok{  mu\_2    }\OtherTok{\textless{}{-}}\NormalTok{ mu\_l}
+\NormalTok{  sigma\_2 }\OtherTok{\textless{}{-}}\NormalTok{ sd\_l}
+  \CommentTok{\# Define log{-}normal distribution, a sum of all the densities }
+  \CommentTok{\# calculated for each data point that we have in our dataset, D}
+\NormalTok{  L   }\OtherTok{\textless{}{-}} \FunctionTok{sum}\NormalTok{( }\FunctionTok{dnorm}\NormalTok{( }\AttributeTok{x =}\NormalTok{ D, }\AttributeTok{mean =}\NormalTok{ mu\_2, }\AttributeTok{sd =}\NormalTok{ sigma\_2 ) )}
+  \CommentTok{\# Return likelihood }
+  \FunctionTok{return}\NormalTok{( L )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+The next step is to compute the numerator, what we call the
+\textbf{unnormalised posterior} (more on this when we learn about
+MCMC!). The only thing we need to do is multiplicate the prior by the
+likelihood. We can do this because we have already defined the
+corresponding functions:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Defined unnormalised posterior}
+\CommentTok{\# unnorm\_post \textless{}{-} function( mu = 1.07, sd = 0.43, mu\_l = 0.85, sd\_l= 0.425, D )\{}
+\CommentTok{\#unnorm\_post \textless{}{-} function( mu, sd, mu\_l, sd\_l, D )\{}
+\NormalTok{unnorm\_post }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{( D, mu, sd, mu\_l, sd\_l )\{}
+  \CommentTok{\# posterior \textasciitilde{} prior x lnL}
+  \FunctionTok{return}\NormalTok{( }\FunctionTok{prior\_fun}\NormalTok{( }\AttributeTok{mu\_l =}\NormalTok{ mu\_l, }\AttributeTok{sd\_l =}\NormalTok{ sd\_l, }\AttributeTok{D =}\NormalTok{ D )}\SpecialCharTok{*}\FunctionTok{L\_norm}\NormalTok{( }\AttributeTok{mu =}\NormalTok{ mu, }\AttributeTok{sd =}\NormalTok{ sd, }\AttributeTok{D =}\NormalTok{ D ) )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+So far, we have defined three functions for three probability
+distributions: the prior, the likelihood, and the unnormalised
+posterior. So now\ldots{} how de we manage to compute \textbf{the
+posterior}? Well, we will need to incorporate the marginal likelihood,
+which basically is a constant that needs to integrate to 1!
+
+Remember that this term is the probability of the data, of everything we
+can observe. In this way, it is an integral over the joint probability:
+
+\(P(marginal\_likelihood)=\int{prior\times lnL}\)
+
+To calculate this integral, we could use the function
+\texttt{integrate}, which will target the unnormalised posterior:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# }\AlertTok{NOTE}\CommentTok{: \textasciigrave{}f\textasciigrave{} should be an R function taking a numeric first argument and returning a numeric vector of the same length. Vectorize will make \textasciigrave{}f\textasciigrave{} a such function that returns the same length output as input.}
+\CommentTok{\# Source: https://stackoverflow.com/questions/43818574/error{-}in{-}integrate{-}evaluation{-}of{-}function{-}gave{-}a{-}result{-}of{-}wrong{-}length}
+\FunctionTok{integrate}\NormalTok{( }\AttributeTok{f=}\FunctionTok{Vectorize}\NormalTok{(unnorm\_post), }\AttributeTok{lower=}\DecValTok{0}\NormalTok{, }\AttributeTok{upper=}\ConstantTok{Inf}\NormalTok{, }\AttributeTok{abs.tol =} \DecValTok{0}\NormalTok{, }
+           \AttributeTok{mu =} \FloatTok{1.07}\NormalTok{, }\AttributeTok{sd =} \FloatTok{0.43}\NormalTok{, }\AttributeTok{mu\_l =} \FloatTok{0.85}\NormalTok{, }\AttributeTok{sd\_l=} \FloatTok{0.425}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 0.6171196 with absolute error < 1.5e-05
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# 0.6171196 with absolute error \textless{} 1.5e{-}05}
+\CommentTok{\# The marginal likelihood, this constant, will be: }
+\NormalTok{C  }\OtherTok{\textless{}{-}} \DecValTok{1} \SpecialCharTok{/} \FloatTok{0.6171196}
+\end{Highlighting}
+\end{Shaded}
+
+If now I want to compute my normalised posterior distribution:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# posterior = C * prior * L = C * unnormalised\_posterior}
+\NormalTok{C  }\OtherTok{\textless{}{-}} \DecValTok{1} \SpecialCharTok{/} \FloatTok{0.6171196}
+\NormalTok{post\_fun }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{( D, C, mu, sd, mu\_l, sd\_l )\{}
+  \FunctionTok{return}\NormalTok{( C }\SpecialCharTok{*} \FunctionTok{unnorm\_post}\NormalTok{( D, mu, sd, mu\_l, sd\_l ) )}
+\NormalTok{\}}
+
+\CommentTok{\# Compute posterior}
+\FunctionTok{post\_fun}\NormalTok{( }\AttributeTok{D =}\NormalTok{ D, }\AttributeTok{C =}\NormalTok{ C, }\AttributeTok{mu =} \FloatTok{1.07}\NormalTok{, }\AttributeTok{sd =} \FloatTok{0.43}\NormalTok{, }\AttributeTok{mu\_l =} \FloatTok{0.85}\NormalTok{, }\AttributeTok{sd\_l=} \FloatTok{0.425}\NormalTok{ ) }\CommentTok{\# 97.64066}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 97.64066
+\end{verbatim}
+
+\end{document}

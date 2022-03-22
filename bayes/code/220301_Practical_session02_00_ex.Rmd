@@ -1,0 +1,111 @@
+---
+title: "Practical session 2"
+author: "Sandra Alvarez-Carretero"
+date: "3/1/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Setting your working environment
+
+First, we will clean and set our working environment. It is important that, whenever you start working on a project, you clean your working environment to avoid issues with objects generated in previous sessions/projects. If you want to do this using the command line, you can do the following:
+
+```{r}
+# Clean environment 
+rm( list = ls( ) )
+
+# Set working directory with package `rstudioapi`:
+#
+# 1. Load the package `rstudioapi`. If you do not have 
+#    it installed, then uncomment and run the
+#    command below
+# install.packages( "rstudioapi" )
+library( rstudioapi ) 
+# 2. Get the path to current open R script
+path_to_file <- getActiveDocumentContext()$path
+wd           <- paste( dirname( path_to_file ), "/", sep = "" )
+setwd( wd )
+```
+
+Now, any data that you generate when you run the commands in this R script will be saved in the directory you have defined above (unless you specify otherwise when saving the data!). 
+
+---
+
+# Prior, likelihood, unnormalised posterior, and posterior
+
+_**SCENARIO - part 1**_<br>
+Your data will be now an alignment 12s RNA gene sequences from human and orangutan. 
+You have checked this alignment and you know that there are a total of $n = 948$ nucleotides.
+When you compare the two sequences, you can count the differences to estimate how closely related they are. In total, you observe $x = 90$ differences.
+
+Now, we want to be able to estimate the molecular distance, $d$, 
+between the two sequences, which will help us understand how closely related these two species are. There are different models of nucleotide substitution that we could use, but we will focus on the somplest one based on the assumption that human and orangutan are quite similar: we will use the Jukes and Cantor (JC69) model.
+
+_**QUESTION 1**_<br>
+Write down the posterior distribution in a Bayesian framework (i.e., prior, likelihood, marginal likelihood). Find out what your parameter of interest is and what data you have. 
+
+_**SCENARIO - part 2**_<br>
+The functions that we will be using for our prior and likelihood are the following:
+
+```{r} 
+# Likelihood function under the JC69 model
+L_d <- function(d, x, n){
+  return( (3/4 - 3*exp(-4*d/3)/4)^x * (1/4 + 3*exp(-4*d/3)/4)^(n - x) )
+}
+
+# Prior function on my parameter of interest.
+# We will assume that an exponential distribution 
+# fits best and that the mean will be 0.2
+prior_d <- function(d, mu){
+  return( exp(-d/mu) / mu )
+}
+```
+
+_**QUESTION 1**_<br>
+Can you define the unnormalised posterior?
+
+```{r}
+unnorm_post <- function(d, x, n, mu)
+{
+  return(prior_d(d = d, mu = mu) * L_d(d = d, x = x, n = n))
+}
+
+```
+
+_**QUESTION 2**_<br>
+Use the `integrate` function to find the normalising constant $C$ and then write the function for the posterior distribution. 
+
+```{r}
+marg_likelihood <- integrate(f = Vectorize(unnorm_post), lower = 0, upper = Inf,
+                             x = 90, n = 948, mu = 0.2, abs.tol = 0)
+C <- 1 / marg_likelihood$value
+
+posterior <- function(d, x, n, mu)
+{
+  return(C * unnorm_post(d = d, x = x, n = n, mu = mu))
+}
+```
+
+_**QUESTION 3**_<br>
+Plot the posterior and the prior together. What can you tell about your Bayesian inference?
+```{r}
+d <- seq(0, 1, by = 0.01)
+prior <- prior_d(d, mu = 0.2)
+post <- posterior(d, x = 90, n = 948, mu = 0.2)
+
+plot.new()
+lines(d, prior, type = "l")
+lines(d, post, col = "red")
+```
+
+_**QUESTION 4 (quite hard)**_<br>
+_HINT: Use the function `integrate`_
+What is the probability that your parameter of interest, $d$, is larger than 0.2?
+
+```{r}
+prob_d <- integrate(f = posterior, lower = 0.2, upper = 1, x = 90, n = 948, mu = 0.2)
+print(prob_d$value)
+```

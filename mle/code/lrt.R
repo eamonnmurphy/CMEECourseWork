@@ -153,4 +153,3 @@ D
 qchisq(0.95, df = 1)
 
 ###### Confidence interval estimation #######
-integr

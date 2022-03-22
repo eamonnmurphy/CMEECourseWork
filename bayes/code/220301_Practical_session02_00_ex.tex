@@ -1,0 +1,249 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\title{Practical session 2}
+\author{Sandra Alvarez-Carretero}
+\date{3/1/2022}
+
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Practical session 2},
+  pdfauthor={Sandra Alvarez-Carretero},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\begin{document}
+\maketitle
+
+\hypertarget{setting-your-working-environment}{%
+\section{Setting your working
+environment}\label{setting-your-working-environment}}
+
+First, we will clean and set our working environment. It is important
+that, whenever you start working on a project, you clean your working
+environment to avoid issues with objects generated in previous
+sessions/projects. If you want to do this using the command line, you
+can do the following:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Clean environment }
+\FunctionTok{rm}\NormalTok{( }\AttributeTok{list =} \FunctionTok{ls}\NormalTok{( ) )}
+
+\CommentTok{\# Set working directory with package \textasciigrave{}rstudioapi\textasciigrave{}:}
+\CommentTok{\#}
+\CommentTok{\# 1. Load the package \textasciigrave{}rstudioapi\textasciigrave{}. If you do not have }
+\CommentTok{\#    it installed, then uncomment and run the}
+\CommentTok{\#    command below}
+\CommentTok{\# install.packages( "rstudioapi" )}
+\FunctionTok{library}\NormalTok{( rstudioapi ) }
+\CommentTok{\# 2. Get the path to current open R script}
+\NormalTok{path\_to\_file }\OtherTok{\textless{}{-}} \FunctionTok{getActiveDocumentContext}\NormalTok{()}\SpecialCharTok{$}\NormalTok{path}
+\NormalTok{wd           }\OtherTok{\textless{}{-}} \FunctionTok{paste}\NormalTok{( }\FunctionTok{dirname}\NormalTok{( path\_to\_file ), }\StringTok{"/"}\NormalTok{, }\AttributeTok{sep =} \StringTok{""}\NormalTok{ )}
+\FunctionTok{setwd}\NormalTok{( wd )}
+\end{Highlighting}
+\end{Shaded}
+
+Now, any data that you generate when you run the commands in this R
+script will be saved in the directory you have defined above (unless you
+specify otherwise when saving the data!).
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{prior-likelihood-unnormalised-posterior-and-posterior}{%
+\section{Prior, likelihood, unnormalised posterior, and
+posterior}\label{prior-likelihood-unnormalised-posterior-and-posterior}}
+
+\emph{\textbf{SCENARIO - part 1}} Your data will be now an alignment 12s
+RNA gene sequences from human and orangutan. You have checked this
+alignment and you know that there are a total of \(n = 948\)
+nucleotides. When you compare the two sequences, you can count the
+differences to estimate how closely related they are. In total, you
+observe \(x = 90\) differences.
+
+Now, we want to be able to estimate the molecular distance, \(d\),
+between the two sequences, which will help us understand how closely
+related these two species are. There are different models of nucleotide
+substitution that we could use, but we will focus on the somplest one
+based on the assumption that human and orangutan are quite similar: we
+will use the Jukes and Cantor (JC69) model.
+
+\emph{\textbf{QUESTION 1}} Write down the posterior distribution in a
+Bayesian framework (i.e., prior, likelihood, marginal likelihood). Find
+out what your parameter of interest is and what data you have.
+
+\emph{\textbf{SCENARIO - part 2}} The functions that we will be using
+for our prior and likelihood are the following:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Likelihood function under the JC69 model}
+\NormalTok{L\_d }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(d, x, n)\{}
+  \FunctionTok{return}\NormalTok{( (}\DecValTok{3}\SpecialCharTok{/}\DecValTok{4} \SpecialCharTok{{-}} \DecValTok{3}\SpecialCharTok{*}\FunctionTok{exp}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{4}\SpecialCharTok{*}\NormalTok{d}\SpecialCharTok{/}\DecValTok{3}\NormalTok{)}\SpecialCharTok{/}\DecValTok{4}\NormalTok{)}\SpecialCharTok{\^{}}\NormalTok{x }\SpecialCharTok{*}\NormalTok{ (}\DecValTok{1}\SpecialCharTok{/}\DecValTok{4} \SpecialCharTok{+} \DecValTok{3}\SpecialCharTok{*}\FunctionTok{exp}\NormalTok{(}\SpecialCharTok{{-}}\DecValTok{4}\SpecialCharTok{*}\NormalTok{d}\SpecialCharTok{/}\DecValTok{3}\NormalTok{)}\SpecialCharTok{/}\DecValTok{4}\NormalTok{)}\SpecialCharTok{\^{}}\NormalTok{(n }\SpecialCharTok{{-}}\NormalTok{ x) )}
+\NormalTok{\}}
+
+\CommentTok{\# Prior function on my parameter of interest.}
+\CommentTok{\# We will assume that an exponential distribution }
+\CommentTok{\# fits best and that the mean will be 0.2}
+\NormalTok{prior\_d }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(d, mu)\{}
+  \FunctionTok{return}\NormalTok{( }\FunctionTok{exp}\NormalTok{(}\SpecialCharTok{{-}}\NormalTok{d}\SpecialCharTok{/}\NormalTok{mu) }\SpecialCharTok{/}\NormalTok{ mu )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\emph{\textbf{QUESTION 1}} Can you define the unnormalised posterior?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{unnorm\_post }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(d, x, n, mu)}
+\NormalTok{\{}
+  \FunctionTok{return}\NormalTok{(}\FunctionTok{prior\_d}\NormalTok{(}\AttributeTok{d =}\NormalTok{ d, }\AttributeTok{mu =}\NormalTok{ mu) }\SpecialCharTok{*} \FunctionTok{L\_d}\NormalTok{(}\AttributeTok{d =}\NormalTok{ d, }\AttributeTok{x =}\NormalTok{ x, }\AttributeTok{n =}\NormalTok{ n))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\emph{\textbf{QUESTION 2}} Use the \texttt{integrate} function to find
+the normalising constant \(C\) and then write the function for the
+posterior distribution.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{marg\_likelihood }\OtherTok{\textless{}{-}} \FunctionTok{integrate}\NormalTok{(}\AttributeTok{f =} \FunctionTok{Vectorize}\NormalTok{(unnorm\_post), }\AttributeTok{lower =} \DecValTok{0}\NormalTok{, }\AttributeTok{upper =} \ConstantTok{Inf}\NormalTok{,}
+                             \AttributeTok{x =} \DecValTok{90}\NormalTok{, }\AttributeTok{n =} \DecValTok{948}\NormalTok{, }\AttributeTok{mu =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{abs.tol =} \DecValTok{0}\NormalTok{)}
+\NormalTok{C }\OtherTok{\textless{}{-}} \DecValTok{1} \SpecialCharTok{/}\NormalTok{ marg\_likelihood}\SpecialCharTok{$}\NormalTok{value}
+
+\NormalTok{posterior }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{(d, x, n, mu)}
+\NormalTok{\{}
+  \FunctionTok{return}\NormalTok{(C }\SpecialCharTok{*} \FunctionTok{unnorm\_post}\NormalTok{(}\AttributeTok{d =}\NormalTok{ d, }\AttributeTok{x =}\NormalTok{ x, }\AttributeTok{n =}\NormalTok{ n, }\AttributeTok{mu =}\NormalTok{ mu))}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\emph{\textbf{QUESTION 3}} Plot the posterior and the prior together.
+What can you tell about your Bayesian inference?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{d }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, }\AttributeTok{by =} \FloatTok{0.01}\NormalTok{)}
+\NormalTok{prior }\OtherTok{\textless{}{-}} \FunctionTok{prior\_d}\NormalTok{(d, }\AttributeTok{mu =} \FloatTok{0.2}\NormalTok{)}
+\NormalTok{post }\OtherTok{\textless{}{-}} \FunctionTok{posterior}\NormalTok{(d, }\AttributeTok{x =} \DecValTok{90}\NormalTok{, }\AttributeTok{n =} \DecValTok{948}\NormalTok{, }\AttributeTok{mu =} \FloatTok{0.2}\NormalTok{)}
+
+\FunctionTok{plot.new}\NormalTok{()}
+\FunctionTok{lines}\NormalTok{(d, prior, }\AttributeTok{type =} \StringTok{"l"}\NormalTok{)}
+\FunctionTok{lines}\NormalTok{(d, post, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220301_Practical_session02_00_ex_files/figure-latex/unnamed-chunk-5-1.pdf}
+
+\emph{\textbf{QUESTION 4 (quite hard)}} \emph{HINT: Use the function
+\texttt{integrate}} What is the probability that your parameter of
+interest, \(d\), is larger than 0.2?
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{prob\_d }\OtherTok{\textless{}{-}} \FunctionTok{integrate}\NormalTok{(}\AttributeTok{f =}\NormalTok{ posterior, }\AttributeTok{lower =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{upper =} \DecValTok{1}\NormalTok{, }\AttributeTok{x =} \DecValTok{90}\NormalTok{, }\AttributeTok{n =} \DecValTok{948}\NormalTok{, }\AttributeTok{mu =} \FloatTok{0.2}\NormalTok{)}
+\FunctionTok{print}\NormalTok{(prob\_d}\SpecialCharTok{$}\NormalTok{value)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 9.974834e-13
+\end{verbatim}
+
+\end{document}
