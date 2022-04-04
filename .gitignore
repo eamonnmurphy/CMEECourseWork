@@ -27,3 +27,4 @@ cluster_run.sh.e*
 *.tif
 *.tiff
 mle/code/wc10/*
+bayes/code/220228_Practical_session01_00ex.html
