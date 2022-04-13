@@ -26,3 +26,6 @@ cluster_run.sh.e*
 *.zip
 *.tif
 *.tiff
+mle/code/wc10/*
+*.html
+james_signature.jpg

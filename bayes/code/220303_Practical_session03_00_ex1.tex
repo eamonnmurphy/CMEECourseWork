@@ -1,0 +1,1139 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\title{Understanding the MCMC algorithm}
+\author{Sandra Alvarez-Carretero and Mario dos Reis}
+\date{11/30/2021}
+
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Understanding the MCMC algorithm},
+  pdfauthor={Sandra Alvarez-Carretero and Mario dos Reis},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+
+\begin{document}
+\maketitle
+
+\hypertarget{part-1}{%
+\section{PART 1}\label{part-1}}
+
+\hypertarget{introduction}{%
+\subsection{Introduction}\label{introduction}}
+
+The data that we will be using for this practical session is the 12S
+rRNA alignment of human and orangutan, which consists of 948 base pairs
+and 90 differences (i.e., 84 transitions and 6 transversions):
+
+\begin{quote}
+\textbf{Table 1}. Numbers and frequencies (in parantheses) of sites for
+the 16 site configurations (patterns) in human and orangutan
+mitochondrial 12s rRNA genes. This table is based on Table 1.3, page 7
+in \href{http://abacus.gene.ucl.ac.uk/MESA/}{Yang (2014)}.
+\end{quote}
+
+\begin{longtable}[]{@{}llllll@{}}
+\toprule
+Orangutan (below) ~Human (right) & T & C & A & G & Sum (\(\pi_{i}\)) \\
+\midrule
+\endhead
+T & 179 (0.188819) & 23 (0.024262) & 1 (0.001055) & 0 (0) & 0.2141 \\
+C & 30 (0.03164646) & 219 (0.231013) & 2 (0.002110) & 0 (0) & 0.2648 \\
+A & 2 (0.002110) & 1 (0.001055) & 291 (0.306962) & 10 (0.010549) &
+0.3207 \\
+G & 0 (0) & 0 (0) & 21 (0.022152) & 169 (0.178270) & 0.2004 \\
+Sum(\(\pi_{j}\) & 0.226 & 0.2563 & 0.3323 & 0.1888 & 1 \\
+\bottomrule
+\end{longtable}
+
+\begin{quote}
+\begin{quote}
+\emph{Note}: Genbank accesion numbers for the human and orangutan
+sequences are \texttt{D38112} and \texttt{NC\_001646}, respectively
+(\href{https://pubmed.ncbi.nlm.nih.gov/7530363/}{Horai et al.~(1995)}).
+There are 954 sites in the alignment, but six sites involve alignment
+gaps and are removed, leaving 948 sites in each sequence. The average
+base frequencies in the two sequences are 0.2184 (T), 0.2605 (C), 0.3265
+(A), and 0.1946 (G).
+\end{quote}
+\end{quote}
+
+We are going to use the \href{https://cran.r-project.org/}{R programming
+language} to load, parse, and analyse the data. You can also run all the
+commands we will go through in this tutorial from the graphical
+interface
+\href{https://www.rstudio.com/products/rstudio/download/}{RStudio}. If
+you are unfamiliar with the installation of both these software, you can
+follow a step-by-step tutorial
+\href{https://github.com/sabifo4/RnBash/tree/master/R_installation}{here}.
+This tutorial has a detailed explanation of each task that you are going
+to carry out. Note that you can also find all the code shown and
+explained here in \href{Practical_1.R}{this R script}.
+
+\hypertarget{analysing-the-data}{%
+\subsection{Analysing the data}\label{analysing-the-data}}
+
+First, we will define the variables for our data set: the length of the
+alignment, the total number of transitions (i.e., substitutions between
+the two pyrimidines, \texttt{T\ \textless{}-\textgreater{}\ C)}), and
+the total number of transversions (i.e., substitutions between the two
+purines, \texttt{A\ \textless{}-\textgreater{}\ G}):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Length of alignment in bp}
+\NormalTok{n  }\OtherTok{\textless{}{-}} \DecValTok{948}
+\CommentTok{\# Total number of transitions (23+30+10+21)}
+\NormalTok{ns }\OtherTok{\textless{}{-}} \DecValTok{84}
+\CommentTok{\# Total number of transversions (1+0+2+0+2+1+0+0)}
+\NormalTok{nv }\OtherTok{\textless{}{-}} \DecValTok{6}
+\end{Highlighting}
+\end{Shaded}
+
+Then, we need to write a function that returns us the log-likelihood
+given the distance between two sequences (\(d\)) and the
+transition/transversion rate ratio (\(\kappa=\alpha/\beta\)), which is
+written as \(f(D|d,k)\). This function might change depending on the
+nucleotide substitution model that is to be used. In this practical
+session, we will be using Kimura's 1980 (K80) nucleotide substitution
+model (see page 8, \href{http://abacus.gene.ucl.ac.uk/MESA/}{Yang
+(2014)}), which accounts for the fact that transitions often occur at
+higher rates than transversions. Therefore, the parameters to consider
+are the following:
+
+\begin{itemize}
+\tightlist
+\item
+  Distance, \(d\).\\
+\item
+  Kappa, \(\kappa\).\\
+\item
+  Alignment length, \(n\). In this example, \(n=948\).\\
+\item
+  Number of transitions, \(ns\). In this example, \(ns=84\).\\
+\item
+  Number of transversions, \(nv\). In this example, \(nv=6\).
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Define log{-}likelihood function, f(D|d,k).}
+\CommentTok{\# This uses Kimura\textquotesingle{}s (1980) substitution model. See p.8 in Yang (2014).}
+\CommentTok{\#}
+\CommentTok{\# Arguments:}
+\CommentTok{\#}
+\CommentTok{\#   d  Numeric, value for the distance.}
+\CommentTok{\#   k  Numeric, value for parameter kappa.}
+\CommentTok{\#   n  Numeric, length of the alignment. Default: 948.}
+\CommentTok{\#   ns Numeric, total number of transitions. Default: 84.}
+\CommentTok{\#   nv Numeric, total number of transcersions. Default: 6.}
+\NormalTok{k80.lnL }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{( d, k, }\AttributeTok{n =} \DecValTok{948}\NormalTok{, }\AttributeTok{ns =} \DecValTok{84}\NormalTok{, }\AttributeTok{nv =} \DecValTok{6}\NormalTok{ ) \{}
+
+  \CommentTok{\# Define probabilities}
+\NormalTok{  p0 }\OtherTok{\textless{}{-}}\NormalTok{ .}\DecValTok{25} \SpecialCharTok{+}\NormalTok{ .}\DecValTok{25} \SpecialCharTok{*} \FunctionTok{exp}\NormalTok{( }\SpecialCharTok{{-}}\DecValTok{4}\SpecialCharTok{*}\NormalTok{d}\SpecialCharTok{/}\NormalTok{( k}\SpecialCharTok{+}\DecValTok{2}\NormalTok{ ) ) }\SpecialCharTok{+}\NormalTok{ .}\DecValTok{5} \SpecialCharTok{*} \FunctionTok{exp}\NormalTok{( }\SpecialCharTok{{-}}\DecValTok{2}\SpecialCharTok{*}\NormalTok{d}\SpecialCharTok{*}\NormalTok{( k}\SpecialCharTok{+}\DecValTok{1}\NormalTok{ )}\SpecialCharTok{/}\NormalTok{( k}\SpecialCharTok{+}\DecValTok{2}\NormalTok{ ) )}
+\NormalTok{  p1 }\OtherTok{\textless{}{-}}\NormalTok{ .}\DecValTok{25} \SpecialCharTok{+}\NormalTok{ .}\DecValTok{25} \SpecialCharTok{*} \FunctionTok{exp}\NormalTok{( }\SpecialCharTok{{-}}\DecValTok{4}\SpecialCharTok{*}\NormalTok{d}\SpecialCharTok{/}\NormalTok{( k}\SpecialCharTok{+}\DecValTok{2}\NormalTok{ ) ) }\SpecialCharTok{{-}}\NormalTok{ .}\DecValTok{5} \SpecialCharTok{*} \FunctionTok{exp}\NormalTok{( }\SpecialCharTok{{-}}\DecValTok{2}\SpecialCharTok{*}\NormalTok{d}\SpecialCharTok{*}\NormalTok{( k}\SpecialCharTok{+}\DecValTok{1}\NormalTok{ )}\SpecialCharTok{/}\NormalTok{( k}\SpecialCharTok{+}\DecValTok{2}\NormalTok{ ) )}
+\NormalTok{  p2 }\OtherTok{\textless{}{-}}\NormalTok{ .}\DecValTok{25} \SpecialCharTok{{-}}\NormalTok{ .}\DecValTok{25} \SpecialCharTok{*} \FunctionTok{exp}\NormalTok{( }\SpecialCharTok{{-}}\DecValTok{4}\SpecialCharTok{*}\NormalTok{d}\SpecialCharTok{/}\NormalTok{( k}\SpecialCharTok{+}\DecValTok{2}\NormalTok{ ) )}
+
+  \CommentTok{\# Return log{-}likelihood}
+  \FunctionTok{return}\NormalTok{ ( ( n }\SpecialCharTok{{-}}\NormalTok{ ns }\SpecialCharTok{{-}}\NormalTok{ nv ) }\SpecialCharTok{*} \FunctionTok{log}\NormalTok{( p0}\SpecialCharTok{/}\DecValTok{4}\NormalTok{ ) }\SpecialCharTok{+}
+\NormalTok{            ns }\SpecialCharTok{*} \FunctionTok{log}\NormalTok{( p1}\SpecialCharTok{/}\DecValTok{4}\NormalTok{ ) }\SpecialCharTok{+}\NormalTok{ nv }\SpecialCharTok{*} \FunctionTok{log}\NormalTok{( p2}\SpecialCharTok{/}\DecValTok{4}\NormalTok{ ) )}
+
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+As we have defined our log-likelihood function, we might want to
+visually see how this distribution looks like if I am to ``plug'' in
+this function different values for my parameters of interest (\(d\) and
+\(\kappa\)) as well as the values that relate to my data (i.e., \(n\),
+\(ns\), \(nv\); which relate to my alignment).
+
+For this example, we are going to select 100 values for \(\kappa\) that
+range from 0 to 100 and 100 values for \(d\) that range from 0 to 0.3.
+Then, we will create a data frame in which we will include all possible
+combinations of the values selected for \(d\) and \(\kappa\). In that
+way, we will be able to extract the paired values of \(d\) and
+\(\kappa\) (i.e., each row in the data frame will correspond to one
+combination of the values paired for \(d\) and \(\kappa\)) and use them
+for subsequent analyses:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Number of values that we want to collect for }
+\CommentTok{\# each parameter of interest}
+\NormalTok{dim }\OtherTok{\textless{}{-}} \DecValTok{100}
+\CommentTok{\# Vector of \textasciigrave{}d\textasciigrave{} values}
+\NormalTok{d.v }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{( }\AttributeTok{from =} \DecValTok{0}\NormalTok{, }\AttributeTok{to =} \FloatTok{0.3}\NormalTok{, }\AttributeTok{len =}\NormalTok{ dim )}
+\CommentTok{\# Vector of \textasciigrave{}k\textasciigrave{} values}
+\NormalTok{k.v }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{( }\AttributeTok{from =} \DecValTok{0}\NormalTok{, }\AttributeTok{to =} \DecValTok{100}\NormalTok{, }\AttributeTok{len =}\NormalTok{ dim )}
+\CommentTok{\# Define grid where we will save all possible }
+\CommentTok{\# combinations with the 100 values of \textasciigrave{}d\textasciigrave{} and }
+\CommentTok{\# the 100 values of \textasciigrave{}k\textasciigrave{}}
+\NormalTok{dk  }\OtherTok{\textless{}{-}} \FunctionTok{expand.grid}\NormalTok{( }\AttributeTok{d =}\NormalTok{ d.v, }\AttributeTok{k =}\NormalTok{ k.v )}
+\end{Highlighting}
+\end{Shaded}
+
+The resulting data frame object has 10,000 rows and 2 columns: we have
+recorded a total of 10,000 paired values of \(d\) and \(\kappa\) that
+have resulted from combining the 100 values of that were proposed for
+each of these parameters of interest.
+
+Now, we can use this object to extract in the correct order the
+``paired'' values of \(\kappa\) and \(d\) so we can ``plug'' them in the
+log-likelihood function and compute the corresponding log-likelihood
+values for each combination of \(d\) and \(\kappa\).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Compute likelihood surface, f(D|d,k)}
+\NormalTok{lnL }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{( }\FunctionTok{k80.lnL}\NormalTok{( }\AttributeTok{d =}\NormalTok{ dk}\SpecialCharTok{$}\NormalTok{d, }\AttributeTok{k =}\NormalTok{ dk}\SpecialCharTok{$}\NormalTok{k ), }\AttributeTok{ncol =}\NormalTok{ dim )}
+\end{Highlighting}
+\end{Shaded}
+
+Once we have saved the output log-likelihood values in the matrix above,
+we will need to scale the likelihood to be 1 at the maximum so there are
+no numerical issues in subsequent analyses:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# For numerical reasons, we scale the likelihood to be 1}
+\CommentTok{\# at the maximum, i.e., we subtract max(lnL)}
+\NormalTok{L }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{( lnL }\SpecialCharTok{{-}} \FunctionTok{max}\NormalTok{( lnL ) )}
+\end{Highlighting}
+\end{Shaded}
+
+At this moment, we have now computed the log-likelihood values for each
+pair of \(d\) and \(\kappa\) values provided to the \texttt{K80.lnL()}
+function!
+
+In addition, if we had some prior information on these two parameters,
+we could also use it to build the prior distributions for \(d\) and
+\(\kappa\). Imagine that you contact an expert on the field, and they
+tell you that the best distribution that you could use to represent the
+information about both \(d\) and \(\kappa\) is the Gamma distribution.
+They also tell you that \(\alpha\) parameter for both Gamma
+distributions should be \(2\) (parameter that the R function
+\texttt{dgamma} has labelled as \texttt{shape}) but that the Gamma prior
+on \(d\) should have \(\beta=20\) and the Gamma prior on \(\kappa\)
+should have \(\beta=0.1\) (the \(\beta\) values is passed to argument
+\texttt{rate} in the \texttt{dgamma} function).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Compute prior surface, f(D)f(k)}
+\NormalTok{Pri }\OtherTok{\textless{}{-}} \FunctionTok{matrix}\NormalTok{( }\FunctionTok{dgamma}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk}\SpecialCharTok{$}\NormalTok{d, }\AttributeTok{shape =} \DecValTok{2}\NormalTok{, }\AttributeTok{rate =} \DecValTok{20}\NormalTok{ ) }\SpecialCharTok{*}
+               \FunctionTok{dgamma}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{shape =} \DecValTok{2}\NormalTok{, }\AttributeTok{rate =}\NormalTok{ .}\DecValTok{1}\NormalTok{ ),}
+               \AttributeTok{ncol =}\NormalTok{ dim )}
+\end{Highlighting}
+\end{Shaded}
+
+Given that now we have our likelihood and our prior distributions, we
+might also want to compute the unnormalised posterior now:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Compute unnormalised posterior surface, f(d)f(k)f(D|d,k)}
+\NormalTok{Pos }\OtherTok{\textless{}{-}}\NormalTok{ Pri }\SpecialCharTok{*}\NormalTok{ L}
+\end{Highlighting}
+\end{Shaded}
+
+Once we have computed the three surfaces, it is time to plot them!
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot prior, likelihood, and unnormalised posterior surfaces.}
+\CommentTok{\# We want one row and three columns.}
+\FunctionTok{par}\NormalTok{( }\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{( }\DecValTok{1}\NormalTok{, }\DecValTok{3}\NormalTok{ ) )}
+\CommentTok{\# Prior surface. Note that the \textasciigrave{}contour()\textasciigrave{} function creates a contour plot.}
+\FunctionTok{image}\NormalTok{( }\AttributeTok{x =}\NormalTok{ d.v, }\AttributeTok{y =}\NormalTok{ k.v, }\AttributeTok{z =} \SpecialCharTok{{-}}\NormalTok{Pri, }\AttributeTok{las =} \DecValTok{1}\NormalTok{, }\AttributeTok{col =} \FunctionTok{heat.colors}\NormalTok{( }\DecValTok{50}\NormalTok{ ),}
+       \AttributeTok{main =} \StringTok{"Prior"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"distance, d"}\NormalTok{,}
+       \AttributeTok{ylab =} \StringTok{"kappa, k"}\NormalTok{, }\AttributeTok{cex.main =} \FloatTok{2.0}\NormalTok{,}
+       \AttributeTok{cex.lab =} \FloatTok{1.5}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{1.5}\NormalTok{ )}
+\FunctionTok{contour}\NormalTok{( }\AttributeTok{x =}\NormalTok{ d.v, }\AttributeTok{y =}\NormalTok{ k.v, }\AttributeTok{z =}\NormalTok{ Pri, }\AttributeTok{nlev=}\DecValTok{10}\NormalTok{, }\AttributeTok{drawlab =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{add =} \ConstantTok{TRUE}\NormalTok{ )}
+\CommentTok{\# Likelihood surface + contour plot.}
+\FunctionTok{image}\NormalTok{( }\AttributeTok{x =}\NormalTok{ d.v, }\AttributeTok{y =}\NormalTok{ k.v, }\AttributeTok{z =} \SpecialCharTok{{-}}\NormalTok{L, }\AttributeTok{las =} \DecValTok{1}\NormalTok{, }\AttributeTok{col =} \FunctionTok{heat.colors}\NormalTok{( }\DecValTok{50}\NormalTok{ ),}
+       \AttributeTok{main =} \StringTok{"Likelihood"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"distance, d"}\NormalTok{,}
+       \AttributeTok{ylab =} \StringTok{"kappa, k"}\NormalTok{, }\AttributeTok{cex.main =} \FloatTok{2.0}\NormalTok{,}
+       \AttributeTok{cex.lab =} \FloatTok{1.5}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{1.5}\NormalTok{ )}
+\FunctionTok{contour}\NormalTok{( }\AttributeTok{x =}\NormalTok{ d.v, }\AttributeTok{y =}\NormalTok{ k.v, }\AttributeTok{z =}\NormalTok{ L, }\AttributeTok{nlev =} \DecValTok{10}\NormalTok{,}
+         \AttributeTok{drawlab =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{add =} \ConstantTok{TRUE}\NormalTok{)}
+\CommentTok{\# Unnormalised posterior surface + contour plot.}
+\FunctionTok{image}\NormalTok{( }\AttributeTok{x =}\NormalTok{ d.v, }\AttributeTok{y =}\NormalTok{ k.v, }\AttributeTok{z =} \SpecialCharTok{{-}}\NormalTok{Pos, }\AttributeTok{las =} \DecValTok{1}\NormalTok{, }\AttributeTok{col =} \FunctionTok{heat.colors}\NormalTok{( }\DecValTok{50}\NormalTok{ ),}
+       \AttributeTok{main =} \StringTok{"Posterior"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"distance, d"}\NormalTok{,}
+       \AttributeTok{ylab =} \StringTok{"kappa, k"}\NormalTok{, }\AttributeTok{cex.main =} \FloatTok{2.0}\NormalTok{,}
+       \AttributeTok{cex.lab =} \FloatTok{1.5}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{1.5}\NormalTok{ )}
+\FunctionTok{contour}\NormalTok{( }\AttributeTok{x =}\NormalTok{ d.v, }\AttributeTok{y =}\NormalTok{ k.v, }\AttributeTok{z =}\NormalTok{ Pos, }\AttributeTok{nlev =} \DecValTok{10}\NormalTok{,}
+         \AttributeTok{drawlab =} \ConstantTok{FALSE}\NormalTok{, }\AttributeTok{add =} \ConstantTok{TRUE}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220303_Practical_session03_00_ex1_files/figure-latex/unnamed-chunk-8-1.pdf}
+
+\hypertarget{part-2-markov-chain-monte-carlo-mcmc}{%
+\section{PART 2: Markov Chain Monte Carlo
+(MCMC)}\label{part-2-markov-chain-monte-carlo-mcmc}}
+
+\hypertarget{introduction-1}{%
+\subsection{Introduction}\label{introduction-1}}
+
+Now, we want to obtain the posterior distribution by MCMC sampling. In
+most practical problems, the marginal likelihood (aka constant \(z\))
+cannot be calculated (either analytically or numerically), and so the
+MCMC algorithm becomes necessary. In this case, we do not calculate the
+posterior as:
+
+\begin{quote}
+\(f(\kappa,d|D)=\frac{f(d)f(\kappa)f(D|d,\kappa)}{z}\)
+\end{quote}
+
+Instead, we \textbf{approximate} the posterior to be the product of the
+prior distribution/s and the likelihood. Following the example used
+above, we have two priors (the prior on \(d\) and the prior on
+\(\kappa\)) and the likelihood. To calculate this approximation, aka the
+\textbf{unnormalised} posterior, we do the following:
+
+\begin{quote}
+\(f(\kappa,d|D)\propto f(d)f(\kappa)f(D|d,\kappa)\)
+\end{quote}
+
+Given that the priors for \(d\) and \(\kappa\) are Gamma distributions,
+which depend on parameters \(\alpha\) and \(\beta\), i.e.,
+\(\Gamma(\alpha,\beta)\)\ldots{}
+
+\begin{quote}
+E.g.: \(f(d)=\Gamma(d|2,20)\), if \(\alpha=2\) and \(\beta=20\).\\
+\(f(\kappa)=\Gamma(d|2,.1)\), if \(\alpha=2\) and \(\beta=0.1\).
+\end{quote}
+
+\ldots{} we can write a function to compute the unnormalised posterior,
+which we will later use when running the MCMC:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Define function that returns the logarithm of the unnormalised posterior:}
+\CommentTok{\#                             f(d) * f(k) * f(D|d,k)}
+\CommentTok{\# By, default we set the priors as:}
+\CommentTok{\#                  f(d) = Gamma(d | 2, 20) and f(k) = Gamma(k | 2, .1)}
+\CommentTok{\#}
+\CommentTok{\# Arguments:}
+\CommentTok{\#}
+\CommentTok{\#   d     Numeric, value for the distance.}
+\CommentTok{\#   k     Numeric, value for parameter kappa.}
+\CommentTok{\#   n     Numeric, length of the alignment. Default: 948.}
+\CommentTok{\#   ns    Numeric, total number of transitions. Default: 84.}
+\CommentTok{\#   nv    Numeric, total number of transcersions. Default: 6.}
+\CommentTok{\#   a.d.  Numeric, alpha value of the Gamma distribution that works as a prior}
+\CommentTok{\#         for the distance (d). Default: 2.}
+\CommentTok{\#   b.d.  Numeric, beta value pf the Gamma distribution that works as a prior}
+\CommentTok{\#         for parameter distance (d). Default: 20.}
+\CommentTok{\#   a.k.  Numeric, alpha value for the Gamma distribution that works as a prior}
+\CommentTok{\#         for parameter kappa (k). Default: 2.}
+\CommentTok{\#   b.k.  Numeric, beta value for the Gamma distribution that works as a prior}
+\CommentTok{\#         for parameter kappa (k). Default: 0.1.}
+\NormalTok{ulnPf }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{( d, k, }\AttributeTok{n =} \DecValTok{948}\NormalTok{, }\AttributeTok{ns =} \DecValTok{84}\NormalTok{, }\AttributeTok{nv =} \DecValTok{6}\NormalTok{,}
+                   \AttributeTok{a.d =} \DecValTok{2}\NormalTok{, }\AttributeTok{b.d =} \DecValTok{20}\NormalTok{, }\AttributeTok{a.k =} \DecValTok{2}\NormalTok{, }\AttributeTok{b.k =}\NormalTok{ .}\DecValTok{1}\NormalTok{ )\{}
+
+  \CommentTok{\# The normalising constant in the prior densities can be ignored}
+\NormalTok{  lnpriord }\OtherTok{\textless{}{-}}\NormalTok{ ( a.d }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{ )}\SpecialCharTok{*}\FunctionTok{log}\NormalTok{( d ) }\SpecialCharTok{{-}}\NormalTok{ b.d }\SpecialCharTok{*}\NormalTok{ d}
+\NormalTok{  lnpriork }\OtherTok{\textless{}{-}}\NormalTok{ ( a.k }\SpecialCharTok{{-}} \DecValTok{1}\NormalTok{ )}\SpecialCharTok{*}\FunctionTok{log}\NormalTok{( k ) }\SpecialCharTok{{-}}\NormalTok{ b.k }\SpecialCharTok{*}\NormalTok{ k}
+
+  \CommentTok{\# Define log{-}likelihood (K80 model)}
+\NormalTok{  expd1 }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{( }\SpecialCharTok{{-}}\DecValTok{4}\SpecialCharTok{*}\NormalTok{d}\SpecialCharTok{/}\NormalTok{( k}\SpecialCharTok{+}\DecValTok{2}\NormalTok{ ) )}
+\NormalTok{  expd2 }\OtherTok{\textless{}{-}} \FunctionTok{exp}\NormalTok{( }\SpecialCharTok{{-}}\DecValTok{2}\SpecialCharTok{*}\NormalTok{d}\SpecialCharTok{*}\NormalTok{( k}\SpecialCharTok{+}\DecValTok{1}\NormalTok{ )}\SpecialCharTok{/}\NormalTok{( k}\SpecialCharTok{+}\DecValTok{2}\NormalTok{ ) )}
+\NormalTok{  p0 }\OtherTok{\textless{}{-}}\NormalTok{ .}\DecValTok{25} \SpecialCharTok{+}\NormalTok{ .}\DecValTok{25} \SpecialCharTok{*}\NormalTok{ expd1 }\SpecialCharTok{+}\NormalTok{ .}\DecValTok{5} \SpecialCharTok{*}\NormalTok{ expd2}
+\NormalTok{  p1 }\OtherTok{\textless{}{-}}\NormalTok{ .}\DecValTok{25} \SpecialCharTok{+}\NormalTok{ .}\DecValTok{25} \SpecialCharTok{*}\NormalTok{ expd1 }\SpecialCharTok{{-}}\NormalTok{ .}\DecValTok{5} \SpecialCharTok{*}\NormalTok{ expd2}
+\NormalTok{  p2 }\OtherTok{\textless{}{-}}\NormalTok{ .}\DecValTok{25} \SpecialCharTok{{-}}\NormalTok{ .}\DecValTok{25} \SpecialCharTok{*}\NormalTok{ expd1}
+\NormalTok{  lnL }\OtherTok{\textless{}{-}}\NormalTok{ ( ( n }\SpecialCharTok{{-}}\NormalTok{ ns }\SpecialCharTok{{-}}\NormalTok{ nv ) }\SpecialCharTok{*} \FunctionTok{log}\NormalTok{( p0}\SpecialCharTok{/}\DecValTok{4}\NormalTok{ ) }\SpecialCharTok{+}\NormalTok{ ns }\SpecialCharTok{*} \FunctionTok{log}\NormalTok{( p1}\SpecialCharTok{/}\DecValTok{4}\NormalTok{ ) }\SpecialCharTok{+}\NormalTok{ nv }\SpecialCharTok{*} \FunctionTok{log}\NormalTok{( p2}\SpecialCharTok{/}\DecValTok{4}\NormalTok{ ) )}
+
+  \CommentTok{\# Return unnormalised posterior (they are lnL, so }
+  \CommentTok{\# you return their sum!)}
+  \FunctionTok{return}\NormalTok{ ( lnpriord }\SpecialCharTok{+}\NormalTok{ lnpriork }\SpecialCharTok{+}\NormalTok{ lnL )}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{the-mcmc-algorithm}{%
+\subsection{The MCMC algorithm}\label{the-mcmc-algorithm}}
+
+Once we have established the function to compute the unnormalised
+posterior, we need to define the function that we will use to run our
+MCMC! The algorithm that we will implement in this function has five
+main parts, which we detail below:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Set initial states for \(d\) and \(\kappa\).\\
+  Now, for \(n\) iterations:
+
+  \begin{enumerate}
+  \def\labelenumii{\arabic{enumii}.}
+  \setcounter{enumii}{1}
+  \tightlist
+  \item
+    Propose a new state \(d^{\*}\) (from an appropriate proposal
+    density).\\
+  \item
+    Accept or reject the proposal with probability:
+    \(\mathrm{min}(1,p(d^{\*})p(x|d^{\*})/p(d)p(x|d))\). If the proposal
+    is accepted, then \(d=d^{\*}\). Otherwise, the same state for \(d\)
+    is kept for the next iteration, \(d=d\).\\
+  \item
+    Save \(d\).\\
+  \item
+    Repeat steps 2-4 for \(\kappa\).\\
+  \item
+    Go to step 2.
+  \end{enumerate}
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Define function with MCMC algorithm.}
+\CommentTok{\#}
+\CommentTok{\# Arguments:}
+\CommentTok{\#}
+\CommentTok{\#   init.d  Numeric, initial state value for parameter d.}
+\CommentTok{\#   init.k  Numeric, initial state value for paramter k.}
+\CommentTok{\#   N       Numeric, number of iterations that the MCMC will run.}
+\CommentTok{\#   w.d     Numeric, width of the sliding{-}window proposal for d.}
+\CommentTok{\#   w.k     Numeric, width of the sliding{-}window proposal for k.}
+\NormalTok{mcmcf }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{( init.d, init.k, N, w.d, w.k ) \{}
+
+  \CommentTok{\# We keep the visited states (d, k) in sample.d and sample.k}
+  \CommentTok{\# for easy plotting. In practical MCMC applications, these}
+  \CommentTok{\# are usually written into a file. These two objects are numeric}
+  \CommentTok{\# vectors of length N+1.}
+\NormalTok{  sample.d }\OtherTok{\textless{}{-}}\NormalTok{ sample.k }\OtherTok{\textless{}{-}} \FunctionTok{numeric}\NormalTok{( N}\SpecialCharTok{+}\DecValTok{1}\NormalTok{ )}
+
+  \CommentTok{\# STEP 1: Set initial parameter values to be used during the first}
+  \CommentTok{\#         iteration of the MCMC.}
+  \CommentTok{\# 1.1. Get initial values for parameters k and d. Save these values}
+  \CommentTok{\#      in vectors sample.d and sample.k}
+\NormalTok{  d }\OtherTok{\textless{}{-}}\NormalTok{ init.d;  sample.d[}\DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ init.d}
+\NormalTok{  k }\OtherTok{\textless{}{-}}\NormalTok{ init.k;  sample.k[}\DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ init.k}
+  \CommentTok{\# 1.2. Get unnormalised posterior}
+\NormalTok{  ulnP  }\OtherTok{\textless{}{-}} \FunctionTok{ulnPf}\NormalTok{( }\AttributeTok{d =}\NormalTok{ d, }\AttributeTok{k =}\NormalTok{ k )}
+  \CommentTok{\# 1.3. Initialise numeric vectors that will be used to keep track of}
+  \CommentTok{\#      the number of times proposed values for each parameter,}
+  \CommentTok{\#      d and k, have been accepted}
+\NormalTok{  acc.d }\OtherTok{\textless{}{-}} \DecValTok{0}\NormalTok{; acc.k }\OtherTok{\textless{}{-}} \DecValTok{0}
+  \CommentTok{\# 1.4. Start MCMC, which will run for N iterations}
+  \ControlFlowTok{for}\NormalTok{ ( i }\ControlFlowTok{in} \DecValTok{1}\SpecialCharTok{:}\NormalTok{N )\{}
+
+    \CommentTok{\# STEP 2: Propose a new state d*.}
+    \CommentTok{\# We use a uniform sliding window of width w with reflection}
+    \CommentTok{\# to propose new values d* and k*}
+    \CommentTok{\# 2.1. Propose d* and accept/reject the proposal}
+\NormalTok{    dprop }\OtherTok{\textless{}{-}}\NormalTok{ d }\SpecialCharTok{+} \FunctionTok{runif}\NormalTok{( }\AttributeTok{n =} \DecValTok{1}\NormalTok{, }\AttributeTok{min =} \SpecialCharTok{{-}}\NormalTok{w.d}\SpecialCharTok{/}\DecValTok{2}\NormalTok{, }\AttributeTok{max =}\NormalTok{ w.d}\SpecialCharTok{/}\DecValTok{2}\NormalTok{ )}
+    \CommentTok{\# 2.2. Reflect if dprop is negative}
+    \ControlFlowTok{if}\NormalTok{ ( dprop }\SpecialCharTok{\textless{}} \DecValTok{0}\NormalTok{ ) dprop }\OtherTok{\textless{}{-}} \SpecialCharTok{{-}}\NormalTok{dprop}
+    \CommentTok{\# 2.3. Compute unnormalised posterior}
+\NormalTok{    ulnPprop }\OtherTok{\textless{}{-}} \FunctionTok{ulnPf}\NormalTok{( }\AttributeTok{d =}\NormalTok{ dprop, }\AttributeTok{k =}\NormalTok{ k )}
+\NormalTok{    lnalpha  }\OtherTok{\textless{}{-}}\NormalTok{ ulnPprop }\SpecialCharTok{{-}}\NormalTok{ ulnP}
+
+    \CommentTok{\# STEP 3: Accept or reject the proposal:}
+    \CommentTok{\#            if ru \textless{} alpha accept proposed d*}
+    \CommentTok{\#            else reject and stay where we are}
+    \ControlFlowTok{if}\NormalTok{ ( lnalpha }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{||} \FunctionTok{runif}\NormalTok{( }\AttributeTok{n =} \DecValTok{1}\NormalTok{ ) }\SpecialCharTok{\textless{}} \FunctionTok{exp}\NormalTok{( lnalpha ) )\{}
+\NormalTok{      d      }\OtherTok{\textless{}{-}}\NormalTok{ dprop}
+\NormalTok{      ulnP   }\OtherTok{\textless{}{-}}\NormalTok{ ulnPprop}
+\NormalTok{      acc.d  }\OtherTok{\textless{}{-}}\NormalTok{ acc.d }\SpecialCharTok{+} \DecValTok{1}
+\NormalTok{    \}}
+
+    \CommentTok{\# STEP 4: Repeat steps 2{-}3 to propose a new state k*.}
+    \CommentTok{\# 4.1. Propose k* and accept/reject the proposal}
+\NormalTok{    kprop }\OtherTok{\textless{}{-}}\NormalTok{ k }\SpecialCharTok{+} \FunctionTok{runif}\NormalTok{( }\AttributeTok{n =} \DecValTok{1}\NormalTok{, }\AttributeTok{min =} \SpecialCharTok{{-}}\NormalTok{w.k}\SpecialCharTok{/}\DecValTok{2}\NormalTok{, }\AttributeTok{max =}\NormalTok{ w.k}\SpecialCharTok{/}\DecValTok{2}\NormalTok{ )}
+    \CommentTok{\# 4.2. Reflect if kprop is negative}
+    \ControlFlowTok{if}\NormalTok{ ( kprop }\SpecialCharTok{\textless{}} \DecValTok{0}\NormalTok{ ) kprop }\OtherTok{\textless{}{-}} \SpecialCharTok{{-}}\NormalTok{kprop}
+    \CommentTok{\# 4.3. Compute unnormalised posterior}
+\NormalTok{    ulnPprop }\OtherTok{\textless{}{-}} \FunctionTok{ulnPf}\NormalTok{( }\AttributeTok{d =}\NormalTok{ d, }\AttributeTok{k =}\NormalTok{ kprop )}
+\NormalTok{    lnalpha  }\OtherTok{\textless{}{-}}\NormalTok{ ulnPprop }\SpecialCharTok{{-}}\NormalTok{ ulnP}
+    \CommentTok{\# 4.4. Accept/reject proposal:}
+    \CommentTok{\#          if ru \textless{} alpha accept proposed k*}
+    \CommentTok{\#          else reject and stay where we are}
+    \ControlFlowTok{if}\NormalTok{ ( lnalpha }\SpecialCharTok{\textgreater{}} \DecValTok{0} \SpecialCharTok{||} \FunctionTok{runif}\NormalTok{( }\AttributeTok{n =} \DecValTok{1}\NormalTok{ ) }\SpecialCharTok{\textless{}} \FunctionTok{exp}\NormalTok{( lnalpha ) )\{}
+\NormalTok{      k     }\OtherTok{\textless{}{-}}\NormalTok{ kprop}
+\NormalTok{      ulnP  }\OtherTok{\textless{}{-}}\NormalTok{ ulnPprop}
+\NormalTok{      acc.k }\OtherTok{\textless{}{-}}\NormalTok{ acc.k }\SpecialCharTok{+} \DecValTok{1}
+\NormalTok{    \}}
+
+    \CommentTok{\# STEP 5: Save chain state for each parameter so we can later}
+    \CommentTok{\#         plot the corresponding histograms}
+\NormalTok{    sample.d[i}\SpecialCharTok{+}\DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ d}
+\NormalTok{    sample.k[i}\SpecialCharTok{+}\DecValTok{1}\NormalTok{] }\OtherTok{\textless{}{-}}\NormalTok{ k}
+\NormalTok{  \}}
+
+  \CommentTok{\# Print out the proportion of times}
+  \CommentTok{\# the proposals were accepted}
+  \FunctionTok{cat}\NormalTok{( }\StringTok{"Acceptance proportions:}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{, }\StringTok{"d: "}\NormalTok{, acc.d}\SpecialCharTok{/}\NormalTok{N, }\StringTok{" | k: "}\NormalTok{, acc.k}\SpecialCharTok{/}\NormalTok{N, }\StringTok{"}\SpecialCharTok{\textbackslash{}n}\StringTok{"}\NormalTok{ )}
+
+  \CommentTok{\# Return vector of d and k visited during MCMC}
+  \FunctionTok{return}\NormalTok{( }\FunctionTok{list}\NormalTok{( }\AttributeTok{d =}\NormalTok{ sample.d, }\AttributeTok{k =}\NormalTok{ sample.k ) )}
+
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Before proceeding with the next steps, we can set a seed number so we
+can later reproduce the results that we get when running the MCMCs that
+you will see below. You can ommit running the next command if you want
+to get different results each time you run this tutorial:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{( }\DecValTok{12345}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{running-an-mcmc}{%
+\subsection{Running an MCMC}\label{running-an-mcmc}}
+
+Before we run our MCMC function, we might want to estimate how long this
+might take. The function \texttt{system.time()} can be used for this
+purpose:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Test run{-}time}
+\FunctionTok{system.time}\NormalTok{( }\FunctionTok{mcmcf}\NormalTok{( }\AttributeTok{init.d =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{init.k =} \DecValTok{20}\NormalTok{, }\AttributeTok{N =} \FloatTok{1e4}\NormalTok{,}
+                    \AttributeTok{w.d =} \FloatTok{0.12}\NormalTok{, }\AttributeTok{w.k =} \DecValTok{180}\NormalTok{ ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Acceptance proportions:
+##  d:  0.3001  | k:  0.3109
+\end{verbatim}
+
+\begin{verbatim}
+##    user  system elapsed 
+##   0.270   0.029   0.298
+\end{verbatim}
+
+Once we have an estimate of the time it can take us to run an MCMC with
+specific settings (see R code above), we can run our function and save
+the output in an object, which we will later have to inspect:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Run MCMC and save output}
+\NormalTok{dk.mcmc }\OtherTok{\textless{}{-}} \FunctionTok{mcmcf}\NormalTok{( }\AttributeTok{init.d =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{init.k =} \DecValTok{20}\NormalTok{, }\AttributeTok{N =} \FloatTok{1e4}\NormalTok{,}
+                  \AttributeTok{w.d =} \FloatTok{0.12}\NormalTok{, }\AttributeTok{w.k =} \DecValTok{180}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Acceptance proportions:
+##  d:  0.3013  | k:  0.3069
+\end{verbatim}
+
+\hypertarget{mcmc-diagnostics-using-trace-plots}{%
+\subsection{MCMC diagnostics: using trace
+plots}\label{mcmc-diagnostics-using-trace-plots}}
+
+The next step is very important: you need to make sure that your chain
+has converged and that there have been no issues during the sampling.
+For this purpose, we can use visual diagnostics such as plotting the
+traces of the sampled values during the \(n\) iterations the chain ran:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot traces of the values sampled for each parameter}
+\FunctionTok{par}\NormalTok{( }\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{( }\DecValTok{1}\NormalTok{,}\DecValTok{3}\NormalTok{ ) )}
+\CommentTok{\# Plot trace for parameter d}
+\FunctionTok{plot}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc}\SpecialCharTok{$}\NormalTok{d, }\AttributeTok{ty =} \StringTok{\textquotesingle{}l\textquotesingle{}}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"Iteration"}\NormalTok{,}
+      \AttributeTok{ylab =} \StringTok{"d"}\NormalTok{, }\AttributeTok{main =} \StringTok{"Trace of d"}\NormalTok{ )}
+\CommentTok{\# Plot trace for parameter k}
+\FunctionTok{plot}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{ty =} \StringTok{\textquotesingle{}l\textquotesingle{}}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"Iteration"}\NormalTok{,}
+      \AttributeTok{ylab =} \StringTok{"k"}\NormalTok{, }\AttributeTok{main =} \StringTok{"Trace of k"}\NormalTok{ )}
+\CommentTok{\# Plot the joint sample of d and k (points sampled from posterior surface)}
+\FunctionTok{plot}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc}\SpecialCharTok{$}\NormalTok{d, }\AttributeTok{y =}\NormalTok{ dk.mcmc}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{pch =} \StringTok{\textquotesingle{}.\textquotesingle{}}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"d"}\NormalTok{,}
+      \AttributeTok{ylab =} \StringTok{"k"}\NormalTok{, }\AttributeTok{main =} \StringTok{"Joint of d and k"}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220303_Practical_session03_00_ex1_files/figure-latex/unnamed-chunk-14-1.pdf}
+
+\emph{\textbf{QUESTION 1}} What would you say about these chains? Have
+they converged? As an additional exercise, you can change the starting
+parameter values, run an MCMC with the new settings, and then check for
+chain convergence. Does something change with your new settings?
+
+\hypertarget{part-3-efficiency-of-the-mcmc-chain}{%
+\section{PART 3: Efficiency of the MCMC
+chain}\label{part-3-efficiency-of-the-mcmc-chain}}
+
+\hypertarget{introduction-2}{%
+\subsection{Introduction}\label{introduction-2}}
+
+Remember that values sampled in an MCMC are autocorrelated because the
+proposed state for the next iteration is either the current state (i.e.,
+the new proposed state during the current iteration is rejected, and
+thus the current state is kept for the next iteration) or a modification
+of it (i.e., the new proposed state, based on a distribution that uses
+the current state, is accepted to be used in the next iteration).
+
+In addition, the efficiency of an MCMC chain is closely related to the
+autocorrelation. Intuitively, if the autocorrelation is high, the chain
+will be inefficient, i.e., we will need to run the chain for a long time
+to obtain a good approximation to the posterior distribution.
+
+The efficiency of a chain is defined as: \textgreater{}
+eff=1/(1+2(r1+r2+r3+\ldots)) where \(r_{i}\) is the correlation for lag
+\(i\).
+
+We are going to go through different examples with which we can evaluate
+chain efficiency.
+
+\hypertarget{autocorrelation-function-acf-plots}{%
+\subsection{Autocorrelation Function (ACF)
+plots}\label{autocorrelation-function-acf-plots}}
+
+First, we will run a very long chain and plot the corresponding
+autocorrelation function (ACF) for each parameter:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Run n=1e6 iterations}
+\NormalTok{dk.mcmc2 }\OtherTok{\textless{}{-}} \FunctionTok{mcmcf}\NormalTok{( }\AttributeTok{init.d =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{init.k =} \DecValTok{20}\NormalTok{, }\AttributeTok{N =} \FloatTok{1e6}\NormalTok{,}
+                   \AttributeTok{w.d =}\NormalTok{ .}\DecValTok{12}\NormalTok{, }\AttributeTok{w.k =} \DecValTok{180}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Acceptance proportions:
+##  d:  0.300366  | k:  0.305855
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot ACF for each parameter}
+\FunctionTok{par}\NormalTok{( }\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{( }\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{ ) )}
+\FunctionTok{acf}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc2}\SpecialCharTok{$}\NormalTok{d )}
+\FunctionTok{acf}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc2}\SpecialCharTok{$}\NormalTok{k )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220303_Practical_session03_00_ex1_files/figure-latex/unnamed-chunk-15-1.pdf}
+
+\emph{\textbf{QUESTION 1}} What can you tell about this MCMC run by
+looking at these ACF plots?
+
+\hypertarget{calculating-chain-efficiency-values}{%
+\subsection{Calculating chain efficiency
+values}\label{calculating-chain-efficiency-values}}
+
+Apart from calculating and plotting the ACF, we can also calculate chain
+efficiency. For this purpose, we use the following function:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Define efficiency function}
+\CommentTok{\#}
+\CommentTok{\# Arguments:}
+\CommentTok{\#  acf  Numeric, autocorrelation value}
+\NormalTok{eff }\OtherTok{\textless{}{-}} \ControlFlowTok{function}\NormalTok{( acf ) }\DecValTok{1} \SpecialCharTok{/}\NormalTok{ ( }\DecValTok{1} \SpecialCharTok{+} \DecValTok{2} \SpecialCharTok{*} \FunctionTok{sum}\NormalTok{( acf}\SpecialCharTok{$}\NormalTok{acf[}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{] ) )}
+\end{Highlighting}
+\end{Shaded}
+
+As we have saved the sampled values from the chain previously run in
+object \texttt{dk.mcmc2}, we can now compute this chain's efficiency:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Compute efficiency}
+\FunctionTok{eff}\NormalTok{( }\AttributeTok{acf =} \FunctionTok{acf}\NormalTok{( dk.mcmc2}\SpecialCharTok{$}\NormalTok{d ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220303_Practical_session03_00_ex1_files/figure-latex/unnamed-chunk-17-1.pdf}
+
+\begin{verbatim}
+## [1] 0.2243995
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{eff}\NormalTok{( }\AttributeTok{acf =} \FunctionTok{acf}\NormalTok{( dk.mcmc2}\SpecialCharTok{$}\NormalTok{k ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220303_Practical_session03_00_ex1_files/figure-latex/unnamed-chunk-17-2.pdf}
+
+\begin{verbatim}
+## [1] 0.204568
+\end{verbatim}
+
+\emph{\textbf{QUESTION 1}} What can you tell about this chain with
+regards to the efficiency values you have just computed?
+
+\hypertarget{comparing-efficient-vs-inefficient-mcmcs}{%
+\subsection{Comparing efficient VS inefficient
+MCMCs}\label{comparing-efficient-vs-inefficient-mcmcs}}
+
+\hypertarget{example-1}{%
+\subsubsection{Example 1}\label{example-1}}
+
+We will now run another MCMC but, this time, using a proposal density
+with a too large step size for parameter d and another with a too small
+step size for parameter \(\kappa\):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dk.mcmc3 }\OtherTok{\textless{}{-}} \FunctionTok{mcmcf}\NormalTok{( }\AttributeTok{init.d =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{init.k =} \DecValTok{20}\NormalTok{, }\AttributeTok{N =} \FloatTok{1e4}\NormalTok{,}
+                   \AttributeTok{w.d =} \DecValTok{3}\NormalTok{, }\AttributeTok{w.k =} \DecValTok{5}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Acceptance proportions:
+##  d:  0.0208  | k:  0.9362
+\end{verbatim}
+
+When the MCMC has finished, we can plot the corresponding traces for
+each parameter:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot traces for each parameter.}
+\FunctionTok{par}\NormalTok{( }\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{( }\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{ ) )}
+\FunctionTok{plot}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc3}\SpecialCharTok{$}\NormalTok{d, }\AttributeTok{ty =} \StringTok{\textquotesingle{}l\textquotesingle{}}\NormalTok{, }\AttributeTok{main =} \StringTok{"Trace of d"}\NormalTok{, }\AttributeTok{cex.main =} \FloatTok{2.0}\NormalTok{,}
+      \AttributeTok{cex.lab =} \FloatTok{1.5}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{1.5}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"d"}\NormalTok{ )}
+\FunctionTok{plot}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc3}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{ty =} \StringTok{\textquotesingle{}l\textquotesingle{}}\NormalTok{, }\AttributeTok{main =} \StringTok{"Trace of k"}\NormalTok{, }\AttributeTok{cex.main =} \FloatTok{2.0}\NormalTok{,}
+      \AttributeTok{cex.lab =} \FloatTok{1.5}\NormalTok{, }\AttributeTok{cex.axis =} \FloatTok{1.5}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"k"}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220303_Practical_session03_00_ex1_files/figure-latex/unnamed-chunk-19-1.pdf}
+
+\emph{\textbf{QUESTION 1}} What can you tell about the chain efficiency
+when using these parameters?
+
+\hypertarget{example-2}{%
+\subsubsection{Example 2}\label{example-2}}
+
+Now, we run the chain longer but keep the same starting values for the
+rest of the parameters. Then, we compute the chain efficiency for each
+parameter:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Run MCMC}
+\NormalTok{dk.mcmc4 }\OtherTok{\textless{}{-}} \FunctionTok{mcmcf}\NormalTok{( }\AttributeTok{init.d =} \FloatTok{0.2}\NormalTok{, }\AttributeTok{init.k =} \DecValTok{20}\NormalTok{, }\AttributeTok{N =} \FloatTok{1e6}\NormalTok{,}
+                   \AttributeTok{w.d =} \DecValTok{3}\NormalTok{, }\AttributeTok{w.k =} \DecValTok{5}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Acceptance proportions:
+##  d:  0.024503  | k:  0.941828
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Compute efficiency values}
+\FunctionTok{eff}\NormalTok{( }\AttributeTok{acf =} \FunctionTok{acf}\NormalTok{( dk.mcmc4}\SpecialCharTok{$}\NormalTok{d, }\AttributeTok{lag.max =} \FloatTok{2e3}\NormalTok{ ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220303_Practical_session03_00_ex1_files/figure-latex/unnamed-chunk-20-1.pdf}
+
+\begin{verbatim}
+## [1] 0.01546219
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{eff}\NormalTok{( }\AttributeTok{acf =} \FunctionTok{acf}\NormalTok{( dk.mcmc4}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{lag.max =} \FloatTok{2e3}\NormalTok{ ) )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220303_Practical_session03_00_ex1_files/figure-latex/unnamed-chunk-20-2.pdf}
+
+\begin{verbatim}
+## [1] 0.003721209
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot the traces for efficient (part 2) and inefficient chains.}
+\FunctionTok{par}\NormalTok{( }\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{( }\DecValTok{2}\NormalTok{,}\DecValTok{2}\NormalTok{ ) )}
+\FunctionTok{plot}\NormalTok{( dk.mcmc}\SpecialCharTok{$}\NormalTok{d, }\AttributeTok{ty =} \StringTok{\textquotesingle{}l\textquotesingle{}}\NormalTok{, }\AttributeTok{las =} \DecValTok{1}\NormalTok{, }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{( .}\DecValTok{05}\NormalTok{,.}\DecValTok{2}\NormalTok{ ),}
+      \AttributeTok{main =} \StringTok{"Trace of d, efficient chain"}\NormalTok{, }\AttributeTok{xlab =} \StringTok{\textquotesingle{}\textquotesingle{}}\NormalTok{,}
+      \AttributeTok{ylab =} \StringTok{"Distance, d"}\NormalTok{, }\AttributeTok{cex.main =} \FloatTok{2.0}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{1.5}\NormalTok{ )}
+\FunctionTok{plot}\NormalTok{( dk.mcmc3}\SpecialCharTok{$}\NormalTok{d, }\AttributeTok{ty =} \StringTok{\textquotesingle{}l\textquotesingle{}}\NormalTok{, }\AttributeTok{las =} \DecValTok{1}\NormalTok{, }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{( .}\DecValTok{05}\NormalTok{,.}\DecValTok{2}\NormalTok{ ),}
+      \AttributeTok{main =} \StringTok{"Trace of d, inefficient chain"}\NormalTok{, }\AttributeTok{xlab=}\StringTok{\textquotesingle{}\textquotesingle{}}\NormalTok{,}
+      \AttributeTok{ylab =} \StringTok{\textquotesingle{}\textquotesingle{}}\NormalTok{, }\AttributeTok{cex.main =} \FloatTok{2.0}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{1.5}\NormalTok{ )}
+\FunctionTok{plot}\NormalTok{( dk.mcmc}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{ty =} \StringTok{\textquotesingle{}l\textquotesingle{}}\NormalTok{, }\AttributeTok{las =} \DecValTok{1}\NormalTok{, }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{( }\DecValTok{0}\NormalTok{,}\DecValTok{100}\NormalTok{ ),}
+      \AttributeTok{main =} \StringTok{"Trace of k, efficient chain"}\NormalTok{,}
+      \AttributeTok{xlab =} \StringTok{\textquotesingle{}\textquotesingle{}}\NormalTok{, }\AttributeTok{ylab =} \StringTok{"ts/tv ratio, k"}\NormalTok{,}
+      \AttributeTok{cex.main =} \FloatTok{2.0}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{1.5}\NormalTok{ )}
+\FunctionTok{plot}\NormalTok{( dk.mcmc3}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{ty =} \StringTok{\textquotesingle{}l\textquotesingle{}}\NormalTok{, }\AttributeTok{las =} \DecValTok{1}\NormalTok{, }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{( }\DecValTok{0}\NormalTok{,}\DecValTok{100}\NormalTok{ ),}
+      \AttributeTok{main =} \StringTok{"Trace of k, inefficient chain"}\NormalTok{,}
+      \AttributeTok{xlab =} \StringTok{\textquotesingle{}\textquotesingle{}}\NormalTok{, }\AttributeTok{ylab =} \StringTok{\textquotesingle{}\textquotesingle{}}\NormalTok{, }\AttributeTok{cex.main =} \FloatTok{2.0}\NormalTok{, }\AttributeTok{cex.lab =} \FloatTok{1.5}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220303_Practical_session03_00_ex1_files/figure-latex/unnamed-chunk-20-3.pdf}
+
+\emph{\textbf{QUESTION 1}} What differences can you observe after
+running the chain longer?
+
+\hypertarget{part-4-checking-for-convergence}{%
+\section{PART 4: Checking for
+convergence}\label{part-4-checking-for-convergence}}
+
+Last, we will learn more about the concept of burn-in and its effect on
+chain convergence.
+
+\hypertarget{example-1-1}{%
+\subsection{Example 1}\label{example-1-1}}
+
+We will run two different chains: one with a high starting value for
+parameters d and \(\kappa\) and another with a low starting value for
+these two parameters:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Run MCMCs with high/low starting values for parameters d and k.}
+\NormalTok{dk.mcmc.l }\OtherTok{\textless{}{-}} \FunctionTok{mcmcf}\NormalTok{( }\AttributeTok{init.d =} \FloatTok{0.01}\NormalTok{, }\AttributeTok{init.k =} \DecValTok{20}\NormalTok{, }\AttributeTok{N =} \FloatTok{1e4}\NormalTok{,}
+                    \AttributeTok{w.d =}\NormalTok{ .}\DecValTok{12}\NormalTok{, }\AttributeTok{w.k =} \DecValTok{180}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Acceptance proportions:
+##  d:  0.2964  | k:  0.2972
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{dk.mcmc.h }\OtherTok{\textless{}{-}} \FunctionTok{mcmcf}\NormalTok{( }\AttributeTok{init.d =} \FloatTok{0.4}\NormalTok{, }\AttributeTok{init.k =} \DecValTok{20}\NormalTok{, }\AttributeTok{N =} \FloatTok{1e4}\NormalTok{,}
+                    \AttributeTok{w.d =}\NormalTok{ .}\DecValTok{12}\NormalTok{, }\AttributeTok{w.k =} \DecValTok{180}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Acceptance proportions:
+##  d:  0.3057  | k:  0.3083
+\end{verbatim}
+
+Now, we can compute the mean and the standard deviation of parameter d.
+Below, we show you how this can be done when using the ``low'' chain,
+although we could have used the ``high'' chain too:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Compute mean and sd for d}
+\NormalTok{mean.d }\OtherTok{\textless{}{-}} \FunctionTok{mean}\NormalTok{( dk.mcmc.l}\SpecialCharTok{$}\NormalTok{d )}
+\NormalTok{sd.d   }\OtherTok{\textless{}{-}} \FunctionTok{sd}\NormalTok{( dk.mcmc.l}\SpecialCharTok{$}\NormalTok{d )}
+\end{Highlighting}
+\end{Shaded}
+
+Now, we can plot the two chains, ``low'' and ``high'', to observe how
+the chains move from either the high or low starting values towards
+the\\
+stationary phase (the area within the dashed lines). The area before it
+reaches stationarity is what we call the ``burn-in'' phase:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot the two chains }
+\FunctionTok{plot}\NormalTok{( dk.mcmc.l}\SpecialCharTok{$}\NormalTok{d, }\AttributeTok{xlim =} \FunctionTok{c}\NormalTok{( }\DecValTok{1}\NormalTok{,}\DecValTok{200}\NormalTok{ ), }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{( }\DecValTok{0}\NormalTok{,}\FloatTok{0.4}\NormalTok{ ), }\AttributeTok{ty =} \StringTok{"l"}\NormalTok{ )}
+\FunctionTok{lines}\NormalTok{( dk.mcmc.h}\SpecialCharTok{$}\NormalTok{d, }\AttributeTok{col =} \StringTok{"red"}\NormalTok{ )}
+\CommentTok{\# Plot a horizontal dashed line to indicate (approximately)}
+\CommentTok{\# the 95\% CI.}
+\FunctionTok{abline}\NormalTok{( }\AttributeTok{h =}\NormalTok{ mean.d }\SpecialCharTok{+} \DecValTok{2} \SpecialCharTok{*} \FunctionTok{c}\NormalTok{( }\SpecialCharTok{{-}}\NormalTok{sd.d, sd.d ), }\AttributeTok{lty =} \DecValTok{2}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220303_Practical_session03_00_ex1_files/figure-latex/unnamed-chunk-23-1.pdf}
+
+\hypertarget{example-2-1}{%
+\subsection{Example 2}\label{example-2-1}}
+
+We are going to run two chains with different starting values so we can
+compare their efficiency:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Run an efficient chain (i.e., good proposal step sizes)}
+\NormalTok{dk.mcmc.b }\OtherTok{\textless{}{-}} \FunctionTok{mcmcf}\NormalTok{( }\AttributeTok{init.d =} \FloatTok{0.05}\NormalTok{, }\AttributeTok{init.k =} \DecValTok{5}\NormalTok{, }\AttributeTok{N =} \FloatTok{1e4}\NormalTok{,}
+                    \AttributeTok{w.d =}\NormalTok{ .}\DecValTok{12}\NormalTok{, }\AttributeTok{w.k =} \DecValTok{180}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Acceptance proportions:
+##  d:  0.299  | k:  0.3069
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Run an inefficient chain (i.e., bad proposal step sizes)}
+\NormalTok{dk.mcmc3.b }\OtherTok{\textless{}{-}} \FunctionTok{mcmcf}\NormalTok{( }\AttributeTok{init.d  =} \FloatTok{0.05}\NormalTok{, }\AttributeTok{init.k =} \DecValTok{5}\NormalTok{, }\AttributeTok{N =} \FloatTok{1e4}\NormalTok{,}
+                     \AttributeTok{w.d =} \DecValTok{3}\NormalTok{, }\AttributeTok{w.k =} \DecValTok{5}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Acceptance proportions:
+##  d:  0.0226  | k:  0.9377
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Plot and compare histograms}
+\CommentTok{\# Set breaking points for the plot}
+\NormalTok{bks }\OtherTok{\textless{}{-}} \FunctionTok{seq}\NormalTok{(}\AttributeTok{from=}\DecValTok{0}\NormalTok{, }\AttributeTok{to=}\DecValTok{150}\NormalTok{, }\AttributeTok{by=}\DecValTok{1}\NormalTok{)}
+\CommentTok{\# Start plotting}
+\FunctionTok{par}\NormalTok{( }\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{( }\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{ ) )}
+\FunctionTok{hist}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc.b}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{prob =} \ConstantTok{TRUE}\NormalTok{, }\AttributeTok{breaks =}\NormalTok{ bks, }\AttributeTok{border =} \ConstantTok{NA}\NormalTok{,}
+      \AttributeTok{col =} \FunctionTok{rgb}\NormalTok{( }\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, .}\DecValTok{5}\NormalTok{ ), }\AttributeTok{las =} \DecValTok{1}\NormalTok{, }\AttributeTok{xlab =} \StringTok{"kappa"}\NormalTok{,}
+      \AttributeTok{xlim =} \FunctionTok{c}\NormalTok{( }\DecValTok{0}\NormalTok{,}\DecValTok{100}\NormalTok{ ), }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{( }\DecValTok{0}\NormalTok{,.}\DecValTok{055}\NormalTok{ ) )}
+\FunctionTok{hist}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{prob=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{breaks=}\NormalTok{bks, }\AttributeTok{border=}\ConstantTok{NA}\NormalTok{,}
+      \AttributeTok{col=}\FunctionTok{rgb}\NormalTok{(.}\DecValTok{5}\NormalTok{, .}\DecValTok{5}\NormalTok{, .}\DecValTok{5}\NormalTok{, .}\DecValTok{5}\NormalTok{), }\AttributeTok{add=}\ConstantTok{TRUE}\NormalTok{)}
+\FunctionTok{hist}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc3.b}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{prob=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{breaks=}\NormalTok{bks, }\AttributeTok{border=}\ConstantTok{NA}\NormalTok{,}
+      \AttributeTok{col=}\FunctionTok{rgb}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{, .}\DecValTok{5}\NormalTok{), }\AttributeTok{las=}\DecValTok{1}\NormalTok{, }\AttributeTok{xlab=}\StringTok{"kappa"}\NormalTok{,}
+      \AttributeTok{xlim=}\FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,}\DecValTok{100}\NormalTok{), }\AttributeTok{ylim=}\FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{,.}\DecValTok{055}\NormalTok{))}
+\FunctionTok{hist}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc3}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{prob=}\ConstantTok{TRUE}\NormalTok{, }\AttributeTok{breaks=}\NormalTok{bks, }\AttributeTok{border=}\ConstantTok{NA}\NormalTok{,}
+      \AttributeTok{col=}\FunctionTok{rgb}\NormalTok{(.}\DecValTok{5}\NormalTok{, .}\DecValTok{5}\NormalTok{, .}\DecValTok{5}\NormalTok{, .}\DecValTok{5}\NormalTok{), }\AttributeTok{add=}\ConstantTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220303_Practical_session03_00_ex1_files/figure-latex/unnamed-chunk-24-1.pdf}
+
+Now, as we did in the previous example, we will compute the mean and the
+standard deviation for each chain. Then, we will plot the corresponding
+densities so it is easier to see which chains are more or less
+efficient:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# A) Calculate the posterior means and s.d for each chain.}
+\CommentTok{\# Compute means for efficient chains (they are quite similar)}
+\FunctionTok{mean}\NormalTok{( dk.mcmc}\SpecialCharTok{$}\NormalTok{d ); }\FunctionTok{mean}\NormalTok{( dk.mcmc.b}\SpecialCharTok{$}\NormalTok{d )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.1042516
+\end{verbatim}
+
+\begin{verbatim}
+## [1] 0.104695
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{mean}\NormalTok{( dk.mcmc}\SpecialCharTok{$}\NormalTok{k ); }\FunctionTok{mean}\NormalTok{( dk.mcmc.b}\SpecialCharTok{$}\NormalTok{k )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 29.12619
+\end{verbatim}
+
+\begin{verbatim}
+## [1] 29.10531
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Compute means for inefficient chains (not so similar)}
+\FunctionTok{mean}\NormalTok{( dk.mcmc3}\SpecialCharTok{$}\NormalTok{d ); }\FunctionTok{mean}\NormalTok{( dk.mcmc3.b}\SpecialCharTok{$}\NormalTok{d )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.1020017
+\end{verbatim}
+
+\begin{verbatim}
+## [1] 0.1057856
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{mean}\NormalTok{( dk.mcmc3}\SpecialCharTok{$}\NormalTok{k ); }\FunctionTok{mean}\NormalTok{( dk.mcmc3.b}\SpecialCharTok{$}\NormalTok{k )}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 27.00842
+\end{verbatim}
+
+\begin{verbatim}
+## [1] 27.25209
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Standard error of the means for efficient chains}
+\FunctionTok{sqrt}\NormalTok{( }\DecValTok{1}\SpecialCharTok{/}\FloatTok{1e4} \SpecialCharTok{*} \FunctionTok{var}\NormalTok{( dk.mcmc}\SpecialCharTok{$}\NormalTok{d ) }\SpecialCharTok{/} \FloatTok{0.23}\NormalTok{ ) }\CommentTok{\# roughly 2.5e{-}4}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0002406502
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sqrt}\NormalTok{( }\DecValTok{1}\SpecialCharTok{/}\FloatTok{1e4} \SpecialCharTok{*} \FunctionTok{var}\NormalTok{( dk.mcmc}\SpecialCharTok{$}\NormalTok{k ) }\SpecialCharTok{/} \FloatTok{0.20}\NormalTok{ ) }\CommentTok{\# roughly 0.2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.2328288
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Standard error of the means for inefficient chain}
+\FunctionTok{sqrt}\NormalTok{( }\DecValTok{1}\SpecialCharTok{/}\FloatTok{1e4} \SpecialCharTok{*} \FunctionTok{var}\NormalTok{( dk.mcmc3}\SpecialCharTok{$}\NormalTok{d ) }\SpecialCharTok{/} \FloatTok{0.015}\NormalTok{ ) }\CommentTok{\# roughly 9.7e{-}4}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.0009067983
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{sqrt}\NormalTok{( }\DecValTok{1}\SpecialCharTok{/}\FloatTok{1e4} \SpecialCharTok{*} \FunctionTok{var}\NormalTok{( dk.mcmc3}\SpecialCharTok{$}\NormalTok{k ) }\SpecialCharTok{/} \FloatTok{0.003}\NormalTok{ ) }\CommentTok{\# roughly 1.6}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.412789
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# B) Plot densities (smoothed histograms) for the efficient and}
+\CommentTok{\#    inefficient chains.}
+\CommentTok{\# Set value to scale the kernel densities for the MCMCs}
+\NormalTok{adj }\OtherTok{\textless{}{-}} \FloatTok{1.5}
+\FunctionTok{par}\NormalTok{( }\AttributeTok{mfrow =} \FunctionTok{c}\NormalTok{( }\DecValTok{1}\NormalTok{,}\DecValTok{2}\NormalTok{ ) )}
+\CommentTok{\# Efficient chains}
+\FunctionTok{plot}\NormalTok{( }\AttributeTok{x =} \FunctionTok{density}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc.b}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{adjust =}\NormalTok{ adj ), }\AttributeTok{col =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{las =} \DecValTok{1}\NormalTok{,}
+      \AttributeTok{xlim  =} \FunctionTok{c}\NormalTok{( }\DecValTok{0}\NormalTok{, }\DecValTok{100}\NormalTok{ ), }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{( }\DecValTok{0}\NormalTok{, .}\DecValTok{05}\NormalTok{ ), }\AttributeTok{xaxs =} \StringTok{"i"}\NormalTok{, }\AttributeTok{yaxs =} \StringTok{"i"}\NormalTok{ )}
+\FunctionTok{lines}\NormalTok{( }\AttributeTok{x =} \FunctionTok{density}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{adjust =}\NormalTok{ adj ), }\AttributeTok{col =} \StringTok{"black"}\NormalTok{ )}
+\CommentTok{\# Inefficient chains}
+\FunctionTok{plot}\NormalTok{( }\AttributeTok{x =} \FunctionTok{density}\NormalTok{( dk.mcmc3.b}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{adjust =}\NormalTok{ adj ), }\AttributeTok{col =} \StringTok{"blue"}\NormalTok{, }\AttributeTok{las =} \DecValTok{1}\NormalTok{,}
+      \AttributeTok{xlim =} \FunctionTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{100}\NormalTok{), }\AttributeTok{ylim =} \FunctionTok{c}\NormalTok{( }\DecValTok{0}\NormalTok{, .}\DecValTok{05}\NormalTok{ ), }\AttributeTok{xaxs =} \StringTok{"i"}\NormalTok{, }\AttributeTok{yaxs =} \StringTok{"i"}\NormalTok{ )}
+\FunctionTok{lines}\NormalTok{( }\AttributeTok{x =} \FunctionTok{density}\NormalTok{( }\AttributeTok{x =}\NormalTok{ dk.mcmc3}\SpecialCharTok{$}\NormalTok{k, }\AttributeTok{adjust =}\NormalTok{ adj ), }\AttributeTok{col =} \StringTok{"black"}\NormalTok{ )}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{220303_Practical_session03_00_ex1_files/figure-latex/unnamed-chunk-25-1.pdf}
+
+\end{document}

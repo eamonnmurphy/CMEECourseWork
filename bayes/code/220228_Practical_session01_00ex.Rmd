@@ -1,0 +1,182 @@
+---
+title: "Practical session 1"
+author: "Sandra Alvarez-Carretero"
+date: "2022/02/28"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Setting your working environment
+
+First, we will set our working environment. It is important that, whenever you start working on a project, you clean your working environment to avoid issues with objects generated in previous sessions/projects. If you want to do this using the command line, you can do the following:
+
+```{r}
+# Clean environment 
+rm( list = ls( ) )
+```
+
+Alternatively, you can always click the brush icon displayed on the top right panel. If there were any objects loaded on your working environment, you will see them disappear! 
+
+>
+<font size="2">
+ _**NOTE**: If you have accidentally removed important objects and do not remember how you generated them, you can always click the tab `History` on the same panel mentioned above. There, you will be able to find all the commands that you have run in the past._
+</font> 
+
+Once you have cleaned your environment, now it is time to set your working directory. You can either do it using the top menu (i.e., `Session > Set Working Directory > To Source File Location`) or using one of two options given in the snippet below:
+
+```{r}
+# Option 1
+# If you know the path to your working directory, 
+# you can use the command `setwd()`. Please 
+# uncomment the command below and replace 
+# `path_to_your_wd` with the path to your working 
+# directory: 
+# setwd( "path_to_your_wd")
+
+# Option 2
+# You can use the package `rstudioapi` to automatically 
+# find the path to the R script you are using. You can
+# find them below:
+#
+# 1. Load the package `rstudioapi`. If you do not have 
+#    it installed, then uncomment and run the
+#    command below
+# install.packages( "rstudioapi" )
+library( rstudioapi ) 
+# 2. Get the path to current open R script
+path_to_file <- getActiveDocumentContext()$path
+wd           <- paste( dirname( path_to_file ), "/", sep = "" )
+setwd( wd )
+```
+
+Now, any data that you generate when you run the commands in this R script will be saved in the directory you have specified above (unless you specify otherwise when saving the data!). 
+
+## Exercises with probabilities
+
+### Exercise 1
+
+#### Scenario   
+
+According to the the classical genetics example (i.e., Mendel and the peas), we know the following:   
+
+- $\mathtt{Y}$ is dominant and $\mathtt{y}$ is recessive. The former corresponds to yellow  peas and the latter to green peas.   
+- We assume that peas are diploid. Therefore, their genotype can be homozygote ($\mathtt{YY}$ or $\mathtt{yy}$) or heterozygote ($\mathtt{yY}$, $\mathtt{Yy}$). We assume equal probabilities for alleles, so: `P(homozygote) = P(heterozygote) = 1/2`.   
+- Genotypes that encode for phenotype "green pea": $\mathtt{yy}$.   
+- Genotypes that encode for phenotype "yellow pea": $\mathtt{Yy}$, $\mathtt{yY}$, $\mathtt{YY}$.   
+
+#### Questions   
+
+1. Which is the probability of a pea being yellow? And of being green? Which term is this probability in the Bayes' theorem?
+2. Given that you observe a yellow pea, what is the probability that this pea is heterozygote?
+Write this down using the Bayes' theorem.
+>
+<font size="2">
+ _**HINT**: You can draw a tree diagram like the one we saw in the lecture this morning to help you find the joint probability, i.e., $P(heterozygote\ and\ yellow)$._
+</font> 
+
+3. And what is the probability of this yellow pea being $\mathtt{Yy}$?   
+
+### Exercise 2
+
+#### Scenario 
+Imagine that there is a 80% probability that having gene `Z` makes you resistant to omicron (i.e., $P(COVID+|gene)=0.8$). On the contrary, if you do not have gene `Z`, you have 10% chances of avoiding getting infected. You have been told that:   
+
+- The probability of having gene `Z` in the population is 1/1000. $P(gene)= 1/1000=0.001$.   
+
+#### Questions
+
+1. Which is the probability that someone is COVID+, i.e., $P(COVID+)$? And COVID-?   
+
+2. Which is the probability that someone has gene `Z` given that they have contracted COVID? In other words, which is the probability that if you are COVID+, you have gene `Z`?   
+
+3. Which is the probability that a COVID- individual does not have gene `Z`?   
+
+4. Which is the probability that a COVID+ individual does not have gene `Z`?   
+
+
+### Exercise 3 (tricky)
+
+#### Scenario
+Assume that the probability of observing each nucleotide independently is the same:
+
+$P(A) = P(T) = P(C) = P(G) = 1/4$
+
+#### Question
+
+1. What is the probability of  observing  the sequence  `ATCGA`?   
+
+
+2. Now, if we change the probability of independently observing the nucleotides to $P(C) = P(G) = 0.2$ and $P(A) = 0.1$ and $P(T) = 0.5$, what is the probability of observing this sequence? And of sequence `AATCGGA`?   
+
+## Distributions you might use in the following exercises 
+
+Here you have some functions that you may use to answer the likelihood questions. Note that sometimes you might need to modify these functions!
+
+### Binomial distribution 
+```{r}
+lnL_binom <- function( p, k, n ) {
+  # Define Binomial
+  lnL <- dbinom( x = k, size = n, prob = p, log = TRUE )
+  # Return likelihood 
+  return( lnL )
+}
+```
+
+### Normal distribution 
+
+```{r}
+lnL_norm <- function( theta, D ) {
+  # Define the mean and the standard deviation, which are passed 
+  # to one argument as a numeric vector of length 2
+  mu    <- theta[1]
+  sigma <- theta[2]
+  # Define log-normal distribution, a sum over all possible values passed 
+  # to data, D
+  lnL   <- sum( dnorm( x = D, mean = mu, sd = sigma, log = TRUE ) )
+  # Return likelihood 
+  return( lnL )
+}
+```
+
+
+## Understanding the likelihood
+
+### Exercise 1
+
+#### Scenario
+After 62 visits to the field, you manage to observe 19 different bird specimens. 
+
+#### Question
+What is the probability with which you can observe a bird specimen?   
+
+```{r}
+optimise(lnL_binom, interval = c(0,1), k = 19, n = 62, maximum = T)
+```
+
+### Exercise 2
+
+#### Scenario
+Let's generate a random data set in which we assume that the weight of 80 specimens of pandas follow a normal distribution. We will assume that our mean is 110 Kg, with a standard deviation of 20. 
+
+```{r}
+# Set a seed number so you can always simulate the same values when you run this code
+set.seed( 12345 )
+# Simulate data 
+n  <- 80
+mu <- 110
+sd <- 20
+# Get weight measurements for n = 80 panda specimens
+weight <- rnorm( n = n, mean = mu, sd = sd )
+
+hist(weight)
+
+optim(par = c(50,50), fn = lnL_norm, control = list(fnscale = -1), D = weight)
+```
+
+#### Questions
+1. Plot this normal distribution.   
+
+2. What are the values of parameters $\mu$ and standard deviation that maximize this likelihood function?   
